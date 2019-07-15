@@ -31,10 +31,22 @@ Topics will include:
 Week | Lead | Title | Description
 ---- | ---- | ----- | ---
 1 | BRG | COMPAS intro | Overview of ecosystem (core & packages).<br />Why should you care?<br />Tools intro.
-|||| *Assignment*: Install COMPAS and run checks.
+|||| *Assignment:* Install COMPAS and run checks.
 2 | BRG/GKR | COMPAS examples | COMPAS examples covering all course topics and use cases.
-|||| *Assignment*: Make incremental changes to the examples.
+|||| *Assignment:* Make incremental changes to the examples.
 3 | BRG | Data structures and (architectural) geometry | Graph theory, Half-edge data structure, OABB, PCA, Mesh algorithms, ...
-|||| *Assignment*: ???
-4 | BRG | Module 1: Structural design and Engineering | 
+|||| *Assignment:* ???
+4 | BRG | Module 1: Structural design | **Theory:** Graphic statics (`compas_ags`, `compas_tna`, `compas_3gs`), Form finding (`compas_fofin`), Finite Element Analysis (`compas_fea`), ...
+|||| *Assignment:* ???
+5 | BRG | Module 1: Structural design | **Case study:** Cablenet-and-fabric formwork (HiLo)
+|||| *Assignment:* ???
+6 | GKR | Module 2: Robotic assembly | **Theory:** Robotic fabrication planning (`compas_fab`)
+|||| *Assignment:* ???
+7 | GKR | Module 2: Robotic assembly | **Case study:** The undulating wall
+|||| *Assignment:* ???
+8 | DBT | Module 3: Volumetric modeling | **Theory:**
+|||| *Assignment:* ???
+9 | DBT | Module 3: Volumetric modeling | **Case study:**
+|||| *Assignment:* ???
+10 | All | Use COMPAS in research | Make your own package, Best practices, COMPAS projects, COMPAS PhD packages, ...
 
