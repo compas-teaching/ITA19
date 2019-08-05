@@ -44,9 +44,9 @@ Week | Lead | Title | Description
 |||| *Assignment:* ???
 7 | GKR | Module 2: Robotic assembly | **Case study:** The undulating wall
 |||| *Assignment:* ???
-8 | DBT | Module 3: Volumetric modeling | **Theory:** geometry representation, history of display technology, 2D: raster vs. vector, boundary representation (BRep) vs. function representation (FRep), oop: primitives, combinations, modifications
+8 | DBT | Module 3: Volumetric modeling | **Theory:** geometry representation, history of display technology, 2D: raster vs. vector, boundary representation (BRep) vs. function representation (FRep), scalar fields, signed distance functions, oop: primitives, combinations, modifications
 |||| *Assignment:* model an everyday object (e.g. coffee cup)
-9 | DBT | Module 3: Volumetric modeling | **Case study:**
+9 | DBT | Module 3: Volumetric modeling | **Case study:** infrastructure integration, internal voids, complex topologies, lattice structures for weight reduction
 |||| *Assignment:* Smart Brick
 10 | All | Use COMPAS in research | Make your own package, Best practices, COMPAS projects, COMPAS PhD packages, ...
 
