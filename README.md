@@ -50,3 +50,47 @@ Week | Lead | Title | Description
 |||| *Assignment:* Smart Brick
 10 | All | Use COMPAS in research | Make your own package, Best practices, COMPAS projects, COMPAS PhD packages, ...
 
+
+## Install jupyter and extensions
+
+If you have installed Anaconda, then you already have jupyter installed. If not,
+then please install jupyter with pip
+
+	conda activate yourenv
+
+
+	pip3 install jupyter
+
+Congratulations, you have installed Jupyter Notebook. To run the notebook:
+
+	jupyter notebook
+
+### Configure workspace
+
+jupyter notebook --generate-config
+
+This writes a default configuration file into: 
+	
+	$HOMEPATH$\.jupyter\jupyter_notebook_config.py (on windows)
+
+or
+	~\.jupyter\jupyter_notebook_config.py (on mac)
+
+If you want jupyter to open in a different directory, then change the following line:
+
+	c.NotebookApp.notebook_dir = 'YOUR_PREFERRED_PATH'
+
+### Download nbextensions
+
+To install nbextensions, execute the commands below in Anaconda Prompt:
+
+	conda install -c conda-forge jupyter_contrib_nbextensions
+	conda install -c conda-forge jupyter_nbextensions_configurator
+
+After installing, restart the Jupyter notebook, and you can observe a new tab Nbextensions added to the menu.
+Install the following extensions:
+
+1. Split Cells Notebook - Enable split cells in Jupyter notebooks
+
+2. RISE - allows you to instantly turn your Jupyter Notebooks into a slideshow. 
+
