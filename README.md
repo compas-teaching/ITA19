@@ -28,28 +28,27 @@ Topics will include:
 
 ## Schedule
 
-Week | Lead | Title | Description
----- | ---- | ----- | ---
-1 | BRG | COMPAS intro | Overview of ecosystem (core & packages).<br />Why should you care?<br />Tools intro.
+Week | Date | Lead | Title | Description
+---- | ---- | ---- | ----- | ---
+1 | Oct 2 | BRG | COMPAS intro | Overview of ecosystem (core & packages).<br />Why should you care?<br />Tools intro.
 |||| *Assignment:* Install COMPAS and run checks.
-2 | BRG/GKR | COMPAS examples | COMPAS examples covering all course topics and use cases.
+2 | Oct 9 | BRG/GKR | COMPAS examples | COMPAS examples covering all course topics and use cases.
 |||| *Assignment:* Make incremental changes to the examples.
-3 | BRG | Data structures and (architectural) geometry | Graph theory, Half-edge data structure, OABB, PCA, Mesh algorithms, ...
+3 | Oct 16 | BRG | Data structures and (architectural) geometry | Graph theory, Half-edge data structure, OABB, PCA, Mesh algorithms, ...
 |||| *Assignment:* ???
-4 | BRG | Module 1: Structural design | **Theory:** Graphic statics (`compas_ags`, `compas_tna`, `compas_3gs`), Form finding (`compas_fofin`), Finite Element Analysis (`compas_fea`), ...
+4 | Oct 23 | BRG | Module 1: Structural design | **Theory:** Graphic statics (`compas_ags`, `compas_tna`, `compas_3gs`), Form finding (`compas_fofin`), Finite Element Analysis (`compas_fea`), ...
 |||| *Assignment:* ???
-5 | BRG | Module 1: Structural design | **Case study:** Cablenet-and-fabric formwork (HiLo)
+5 | Oct 30 | BRG | Module 1: Structural design | **Case study:** Cablenet-and-fabric formwork (HiLo)
 |||| *Assignment:* ???
-6 | GKR | Module 2: Robotic assembly | **Theory:** Robotic fabrication planning (`compas_fab`)
+6 | Nov 6 | GKR | Module 2: Robotic assembly | **Theory:** Robotic fabrication planning (`compas_fab`)
 |||| *Assignment:* ???
-7 | GKR | Module 2: Robotic assembly | **Case study:** The undulating wall
+7 | Nov 13 | GKR | Module 2: Robotic assembly | **Case study:** The undulating wall
 |||| *Assignment:* ???
-8 | DBT | Module 3: Volumetric modeling | **Theory:** geometry representation, history of display technology, 2D: raster vs. vector, boundary representation (BRep) vs. function representation (FRep), scalar fields, signed distance functions, oop: primitives, combinations, modifications
+8 | Nov 20 | DBT | Module 3: Volumetric modeling | **Theory:** geometry representation, history of display technology, 2D: raster vs. vector, boundary representation (BRep) vs. function representation (FRep), scalar fields, signed distance functions, oop: primitives, combinations, modifications
 |||| *Assignment:* model an everyday object (e.g. coffee cup)
-9 | DBT | Module 3: Volumetric modeling | **Case study:** infrastructure integration, internal voids, complex topologies, lattice structures for weight reduction
+9 | Nov 27 | DBT | Module 3: Volumetric modeling | **Case study:** infrastructure integration, internal voids, complex topologies, lattice structures for weight reduction
 |||| *Assignment:* Smart Brick
-10 | All | Use COMPAS in research | Make your own package, Best practices, COMPAS projects, COMPAS PhD packages, ...
-
+10 | Dec 4 | All | Use COMPAS in research | Make your own package, Best practices, COMPAS projects, COMPAS PhD packages, ...
 
 ## Install jupyter and extensions
 
