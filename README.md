@@ -40,10 +40,10 @@ Week | Date | Lead | Title | Description
 |||| *Assignment:* ???
 5 | Oct 30 | BRG | Module 1: Structural design | **Case study:** Cablenet-and-fabric formwork (HiLo)
 |||| *Assignment:* ???
-6 | Nov 6 | GKR | Module 2: Robotic assembly | **Theory:** Robotic fabrication planning (`compas_fab`)
-|||| *Assignment:* ???
-7 | Nov 13 | GKR | Module 2: Robotic assembly | **Case study:** The undulating wall
-|||| *Assignment:* ???
+6 | Nov 6 | GKR | Module 2: Robotic assembly | **Theory:** Robotic fabrication planning (`compas_fab`), coordinate Systems, transformations (matrix), orientation (quaternion, euler angles, axis-angle) (examples with Frame, Transformation class), robot model (joints and links), forward + inverse kinematics, workspace (examples with Robot class), robot control (panel, robot controller, robot machine, motion stack, digital/analog i/o, movel, movej, speed, acceleration), path planning (cartesian path, motion path, path constraints)
+|||| *Assignment:* | several smaller tasks: e.g. rotate a mesh based on 3 euler angles, project mesh, define obstacles and plan path, test several planning algorithms
+7 | Nov 13 | GKR | Module 2: Robotic assembly | **Case study:** The undulating wall: apply robotic fabrication fundamentals on an exemplary design to fabrication project, understanding feedback and time based programming, workflow from design to fabrication: example brick wall, execute with robot, topics of sequence, feedback
+|||| *Assignment:* | Robotic assembly case study
 8 | Nov 20 | DBT | Module 3: Volumetric modeling | **Theory:** geometry representation, history of display technology, 2D: raster vs. vector, boundary representation (BRep) vs. function representation (FRep), scalar fields, signed distance functions, oop: primitives, combinations, modifications
 |||| *Assignment:* model an everyday object (e.g. coffee cup)
 9 | Nov 27 | DBT | Module 3: Volumetric modeling | **Case study:** infrastructure integration, internal voids, complex topologies, lattice structures for weight reduction
