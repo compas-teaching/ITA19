@@ -50,30 +50,31 @@ Week | Date | Lead | Title | Description
 |||| *Assignment:* Smart Brick
 10 | Dec 4 | All | Use COMPAS in research | Make your own package, Best practices, COMPAS projects, COMPAS PhD packages, ...
 
-## Install jupyter and extensions
-
-If you have installed Anaconda, then you already have jupyter installed. If not,
-then please install jupyter with pip
-
-	conda activate yourenv
 
 
-	pip3 install jupyter
+## Jupyter and extensions
 
-Congratulations, you have installed Jupyter Notebook. To run the notebook:
+If you have Anaconda installed, then jupyter is already installed. If not, then install jupyter with pip.
+
+To run the jupyter notebook, you simply have to type:
 
 	jupyter notebook
 
+in your command line.
+
 ### Configure workspace
 
-jupyter notebook --generate-config
+To configure the workspace, type
+
+	jupyter notebook --generate-config
 
 This writes a default configuration file into: 
 	
-	$HOMEPATH$\.jupyter\jupyter_notebook_config.py (on windows)
+`$HOMEPATH$\.jupyter\jupyter_notebook_config.py` (on windows)
 
 or
-	~\.jupyter\jupyter_notebook_config.py (on mac)
+
+`~\.jupyter\jupyter_notebook_config.py` (on mac)
 
 If you want jupyter to open in a different directory, then change the following line:
 
