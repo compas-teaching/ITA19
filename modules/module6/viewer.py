@@ -4,6 +4,7 @@ import meshcat.geometry as mcg
 import uuid
 import numpy as np
 from meshcat import Visualizer
+from meshcat.animation import Animation
 
 def compas_mesh_to_obj_str(mesh):
     lines = ["g object_1"]
@@ -44,6 +45,16 @@ def viewer_draw_lines(viewer, lines, color=None, id=None):
         vertices = np.array([list(line['start']), list(line['end'])]).T
         viewer["%s_%d" % (id, i)].set_object(mcg.Line(mcg.PointsGeometry(vertices), mcg.MeshBasicMaterial(color=color)))
 
+def viewer_draw_sphere(viewer, sphere, id=None):
+    import meshcat.transformations as tf
+    # move to place?
+    if id == None:
+        id = str(uuid.uuid1())
+    s = mcg.Sphere(sphere.radius)
+    viewer[id].set_object(s)
+    #v["sphere"].set_object(g.Mesh(g.Sphere(0.15), g.MeshLambertMaterial(color=0xff11dd)))
+    viewer[id].set_transform(tf.translation_matrix(list(sphere.point)))
+
 
 def viewer_draw_mesh_edges(viewer, mesh, color=None, id=None):
     keys = list(mesh.edges())
@@ -81,6 +92,11 @@ class MeshCatViewer(Visualizer):
     def draw_frame(self, frame, id=None):
         viewer_draw_frame(self, frame, id)
     
+    def draw_sphere(self, sphere, id=None):
+        viewer_draw_sphere(self, sphere, id)
+
+
+    
 
 
 """
@@ -89,6 +105,7 @@ from compas.geometry import Frame
 from compas.geometry import Box
 from compas.datastructures import Mesh
 from compas.datastructures import mesh_quads_to_triangles
+
 import pythreejs as p3js
 from IPython.display import display
 
