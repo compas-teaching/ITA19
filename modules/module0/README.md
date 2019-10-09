@@ -17,4 +17,4 @@ Calculate and print out `is_ccw` for each tuple of points.
 
 ## Extra brownie points 🍪
 
-Given a point `P` and a normal that span a plane in 3D space, return an arbitrary vector within that plane.
+Given a point `P` and a normal that span a plane in 3D space, return an arbitrary vector that rests within that plane.
