@@ -41,6 +41,10 @@ Week | Date | Lead | Title | Description | Slides
 9 | Nov 27 | DBT | Module 3: Volumetric Modeling | **Case study:** Modelling of a node
 10 | Dec 4 | BRG | Next Steps | Using COMPAS in your own work
 
+## Join us on slack
+
+https://tinyurl.com/yxse82a7
+
 
 ## Jupyter and extensions
 
