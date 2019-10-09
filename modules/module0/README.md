@@ -1,7 +1,7 @@
 # Assignment
 
 ## Task 1
-Write a function that returns `True` if the rotation from `AB` onto `AC` is CCW.
+Write a function that returns `True` if the rotation from `AB` onto `AC` is counter-clockwise (ccw).
 
 `A`, `B`, `C` are points in the xy-plane...
 
