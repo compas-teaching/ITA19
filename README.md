@@ -31,7 +31,7 @@ Topics will include:
 Week | Date | Lead | Title | Description | Slides
 ---- | ---- | ---- | ----- | ----------- | -------
 1 | Oct 2 | BRG | Introduction | Course overview, COMPAS intro | [Slides](slides/week-01_COMPAS-basics.pdf)
-2 | Oct 9 | GKR | Getting Started | Development Tools 101<br>Python 101<br>COMPAS 101<br>[Assignment](modules/module0/assignment.md)
+2 | Oct 9 | GKR | Getting Started | Development Tools 101<br>Python 101<br>COMPAS 101<br>[Assignment](modules/module0/assignment.md)| [Slides](slides/week-02_Getting_started.pdf)
 3 | Oct 16 | BRG | Data structures and Geometry | Basic theory and examples
 4 | Oct 23 | BRG | Module 1: Structural Design | **Theory:** Form Finding methods
 5 | Oct 30 | BRG | Module 1: Structural Design | **Case study:** The HiLo cablenet formwork system
