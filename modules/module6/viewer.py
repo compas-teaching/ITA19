@@ -76,24 +76,25 @@ def viewer_draw_frame(viewer, frame, id=None):
     viewer['%s_yaxis' % id].set_object(mcg.Line(mcg.PointsGeometry(vertices), mcg.MeshBasicMaterial(color=0x00ff00)))
     vertices = np.array([list(frame.point), list(frame.point + frame.zaxis)]).T
     viewer['%s_zaxis' % id].set_object(mcg.Line(mcg.PointsGeometry(vertices), mcg.MeshBasicMaterial(color=0x0000ff)))
+    return ['%s_xaxis' % id, '%s_yaxis' % id, '%s_zaxis' % id]
 
 
 class MeshCatViewer(Visualizer):
 
     def draw_mesh(self, mesh, color=None, id=None):
-        viewer_draw_mesh(self, mesh, color, id)
+        return viewer_draw_mesh(self, mesh, color, id)
 
     def draw_mesh_edges(self, mesh, color=None, id=None):
-        viewer_draw_mesh_edges(self, mesh, color, id)
+        return viewer_draw_mesh_edges(self, mesh, color, id)
     
     def draw_box(self, box, color=None, id=None):
-        viewer_draw_box(self, box, color, id)
+        return viewer_draw_box(self, box, color, id)
     
     def draw_frame(self, frame, id=None):
-        viewer_draw_frame(self, frame, id)
+        return viewer_draw_frame(self, frame, id)
     
     def draw_sphere(self, sphere, id=None):
-        viewer_draw_sphere(self, sphere, id)
+        return viewer_draw_sphere(self, sphere, id)
 
 
     
