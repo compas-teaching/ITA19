@@ -28,10 +28,10 @@ Topics will include:
 
 ## Schedule
 
-Week | Date | Lead | Title | Description | Slides
+Week | Date | Lead | Title | Description | Links
 ---- | ---- | ---- | ----- | ----------- | -------
 1 | Oct 2 | BRG | Introduction | Course overview, COMPAS intro | [Slides](slides/week-01_COMPAS-basics.pdf)
-2 | Oct 9 | GKR | Getting Started | Development Tools 101<br>Python 101<br>COMPAS 101<br>[Assignment](modules/module0/)| [Slides](slides/week-02_Getting_started.pdf)
+2 | Oct 9 | GKR | Getting Started | Development Tools 101<br>Python 101<br>COMPAS 101 | [Slides](slides/week-02_Getting_started.pdf), [Assignment](modules/module0/)
 3 | Oct 16 | BRG | Data structures and Geometry | Basic theory and examples
 4 | Oct 23 | BRG | Module 1: Structural Design | **Theory:** Form Finding methods
 5 | Oct 30 | BRG | Module 1: Structural Design | **Case study:** The HiLo cablenet formwork system
@@ -45,14 +45,13 @@ Week | Date | Lead | Title | Description | Slides
 
 https://tinyurl.com/yxse82a7
 
-
 ## Jupyter and extensions
 
 If you have Anaconda installed, then jupyter is already installed. If not, then install jupyter with pip.
 
 To run the jupyter notebook, you simply have to type:
 
-	jupyter notebook
+    jupyter notebook
 
 in your command line.
 
@@ -60,26 +59,26 @@ in your command line.
 
 To configure the workspace, type
 
-	jupyter notebook --generate-config
+    jupyter notebook --generate-config
 
-This writes a default configuration file into: 
-	
-`$HOMEPATH$\.jupyter\jupyter_notebook_config.py` (on windows)
+This writes a default configuration file into:
+
+`%HOMEPATH%\.jupyter\jupyter_notebook_config.py` (on windows)
 
 or
 
-`~\.jupyter\jupyter_notebook_config.py` (on mac)
+`~/.jupyter/jupyter_notebook_config.py` (on mac)
 
 If you want jupyter to open in a different directory, then change the following line:
 
-	c.NotebookApp.notebook_dir = 'YOUR_PREFERRED_PATH'
+    c.NotebookApp.notebook_dir = 'YOUR_PREFERRED_PATH'
 
 ### Download nbextensions
 
 To install nbextensions, execute the commands below in Anaconda Prompt:
 
-	conda install -c conda-forge jupyter_contrib_nbextensions
-	conda install -c conda-forge jupyter_nbextensions_configurator
+    conda install -c conda-forge jupyter_contrib_nbextensions
+    conda install -c conda-forge jupyter_nbextensions_configurator
 
 After installing, restart the Jupyter notebook, and you can observe a new tab Nbextensions added to the menu.
 Install the following extensions:
@@ -87,4 +86,3 @@ Install the following extensions:
 1. Split Cells Notebook - Enable split cells in Jupyter notebooks
 
 2. RISE - allows you to instantly turn your Jupyter Notebooks into a slideshow. 
-
