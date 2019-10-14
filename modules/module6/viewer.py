@@ -44,6 +44,7 @@ def viewer_draw_lines(viewer, lines, color=None, id=None):
     for i, line in enumerate(lines):
         vertices = np.array([list(line['start']), list(line['end'])]).T
         viewer["%s_%d" % (id, i)].set_object(mcg.Line(mcg.PointsGeometry(vertices), mcg.MeshBasicMaterial(color=color)))
+    return ["%s_%d" % (id, i) for i, line in enumerate(lines)]
 
 def viewer_draw_sphere(viewer, sphere, color=None, id=None):
     import meshcat.transformations as tf
@@ -53,8 +54,8 @@ def viewer_draw_sphere(viewer, sphere, color=None, id=None):
         id = str(uuid.uuid1())
     s = mcg.Sphere(sphere.radius)
     viewer[id].set_object(s), mcg.MeshLambertMaterial(color=color)
-    #v["sphere"].set_object(g.Mesh(g.Sphere(0.15), ))
     viewer[id].set_transform(tf.translation_matrix(list(sphere.point)))
+    return id
 
 
 def viewer_draw_mesh_edges(viewer, mesh, color=None, id=None):
