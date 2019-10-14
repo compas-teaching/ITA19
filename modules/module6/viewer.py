@@ -45,14 +45,15 @@ def viewer_draw_lines(viewer, lines, color=None, id=None):
         vertices = np.array([list(line['start']), list(line['end'])]).T
         viewer["%s_%d" % (id, i)].set_object(mcg.Line(mcg.PointsGeometry(vertices), mcg.MeshBasicMaterial(color=color)))
 
-def viewer_draw_sphere(viewer, sphere, id=None):
+def viewer_draw_sphere(viewer, sphere, color=None, id=None):
     import meshcat.transformations as tf
-    # move to place?
+    if color == None:
+        color = 0x777777
     if id == None:
         id = str(uuid.uuid1())
     s = mcg.Sphere(sphere.radius)
-    viewer[id].set_object(s)
-    #v["sphere"].set_object(g.Mesh(g.Sphere(0.15), g.MeshLambertMaterial(color=0xff11dd)))
+    viewer[id].set_object(s), mcg.MeshLambertMaterial(color=color)
+    #v["sphere"].set_object(g.Mesh(g.Sphere(0.15), ))
     viewer[id].set_transform(tf.translation_matrix(list(sphere.point)))
 
 
@@ -93,7 +94,7 @@ class MeshCatViewer(Visualizer):
     def draw_frame(self, frame, id=None):
         return viewer_draw_frame(self, frame, id)
     
-    def draw_sphere(self, sphere, id=None):
+    def draw_sphere(self, sphere, color=None, id=None):
         return viewer_draw_sphere(self, sphere, id)
 
 
