@@ -5,8 +5,15 @@ import uuid
 import numpy as np
 from meshcat import Visualizer
 from meshcat.animation import Animation
+import pymesh
+import os
 
 def compas_mesh_to_obj_str(mesh):
+    filename = os.path.join(os.path.dirname(__file__), "tmp.obj")
+    pymesh.save_mesh(filename, mesh)
+    with open(filename) as file:  
+        return file.read() 
+    """
     lines = ["g object_1"]
     v, f = mesh.to_vertices_and_faces()
     for p in v:
@@ -18,6 +25,7 @@ def compas_mesh_to_obj_str(mesh):
             a, b, c, d = p
             lines.append("f {} {} {} {}".format(a+1, b+1, c+1, d+1))
     return "\n".join(lines)
+    """
 
 def mesh2mcg(mesh):
     contents = compas_mesh_to_obj_str(mesh)
@@ -99,6 +107,15 @@ class MeshCatViewer(Visualizer):
         return viewer_draw_sphere(self, sphere, id)
 
 
+
+import pythreejs as p3js
+from IPython.display import display
+
+class ThreeJsViewer():
+
+    def draw_mesh(self, mesh, color=None, id=None):
+        v, f = mesh.to_vertices_and_faces()
+        return p3js.Geometry(vertices=v, faces=f)
     
 
 
@@ -162,3 +179,10 @@ rendererCube = p3js.Renderer(camera=cCube, background='black', background_opacit
 
 display(rendererCube)
 """
+
+if __name__ == "__main__":
+    import compas
+    #mesh = Mesh.from_obj(compas.get("faces.obj"))
+    #print(compas_mesh_to_obj_str(mesh))
+    #pymesh
+    mesh = pymesh.load_mesh(compas.get("faces.obj"))
