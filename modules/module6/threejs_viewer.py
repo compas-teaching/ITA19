@@ -6,6 +6,10 @@ from compas.utilities import hex_to_rgb
 from compas_fab.artists import BaseRobotArtist
 from compas.geometry import Vector
 from compas.geometry import quaternion_from_matrix
+from compas.geometry import Rotation
+from compas.geometry import Translation
+from compas.geometry import Transformation
+from compas.utilities import flatten
 
 def material_from_color(color=None):
     if color:
@@ -54,57 +58,57 @@ class ThreeJsViewer(object):
     
     def __init__(self, width=600, height=400):
         light = p3js.DirectionalLight(color='#ffffff', position=[0, 0, 1], intensity=0.5)
-        self.camera = p3js.PerspectiveCamera(position=[0, 0, 1], fov=50, children=[light])
+        self.camera = p3js.PerspectiveCamera(position=[2.0, 5.0, 2.0], fov=50, children=[light], aspect=width/float(height))
+        self.camera.up = (0.0, 0.0, 1.0)
+
         self.width = 600
         self.height = 400
         self.geometry = []
+        self.draw_axes(size=1)
     
-    def camera_autozoom(self, camera, objects, offset=1.25, controls=None):
-        boundingBox = p3js.Box3()
-        """
-        boundingBox.setFromObject(object)
-        center = boundingBox.getCenter()
-        size = boundingBox.getSize()
-        
-        maxDim = Math.max( size.x, size.y, size.z )
-        fov = camera.fov * ( Math.PI / 180 );
-        let cameraZ = Math.abs( maxDim / 4 * Math.tan( fov * 2 ) );
-        cameraZ *= offset; // zoom out a little so that objects don't fill the screen
-        camera.position.z = cameraZ;
-        const minZ = boundingBox.min.z;
-        const cameraToFarEdge = ( minZ < 0 ) ? -minZ + cameraZ : cameraZ - minZ;
-        camera.far = cameraToFarEdge * 3
-        camera.updateProjectionMatrix()
-
-        if controls:
-          controls.target = center
-          controls.maxDistance = cameraToFarEdge * 2
-          controls.saveState()
-        else:
-            camera.lookAt(center)
-        """
    
-    def show(self):
+    def show(self, camera_position=[2.0, 5.0, 2.0], action=None):
 
-
-
-
+        self.camera.position = camera_position
 
         children = [p3js.AmbientLight(color='#dddddd'), self.camera]
         children += list(self.geometry)
 
-        axesHelper = p3js.AxesHelper()
-        #axesHelper.geometry.rotateX(-3.14159/2.0)
-        gridHelper = p3js.GridHelper(10, 10)
-        
         scene = p3js.Scene(children=children, background="#aaaaaa")
-        scene.add(axesHelper)
-        scene.add(gridHelper)
+
+        controls = p3js.OrbitControls(controlling=self.camera)
+        controls.target = (2.0, 1.0, -2.0)
+
         renderer = p3js.Renderer(scene=scene, camera=self.camera, 
-                                 controls=[p3js.OrbitControls(controlling=self.camera)],
+                                 controls=[controls],
                                  width=self.width, height=self.height)
-        display(renderer)
+        if not action:
+            display(renderer)
+        else:
+            display(renderer, action)
     
+    def create_action(self, obj, transformations, times, group_with=None):
+        if len(transformations) != len(times):
+            raise ValueError("Pass equal amount of transformations and times")
+        x, y, z, w = obj.quaternion
+        Tinit = Rotation.from_quaternion([w, x, y, z]) * Translation(obj.position)
+        positions = []
+        quaternions = []
+        print(obj.children)
+        for i, M in enumerate(transformations):
+            Sc, Sh, R, T, P = (M * Tinit).decompose()
+            positions.append(list(T.translation))
+            quaternions.append(R.quaternion.xyzw)
+        position_track = p3js.VectorKeyframeTrack(name='.position', times=times, values=list(flatten(positions)))
+        rotation_track = p3js.VectorKeyframeTrack(name='.quaternion', times=times, values=list(flatten(quaternions)))
+        obj_clip = p3js.AnimationClip(tracks=[position_track, rotation_track])
+        
+        if group_with:
+            group = p3js.Group(children=[obj] + group_with)
+            obj_action = p3js.AnimationAction(p3js.AnimationMixer(group), obj_clip, group)
+        else:
+            obj_action = p3js.AnimationAction(p3js.AnimationMixer(obj), obj_clip, obj)
+        return obj_action
 
     def draw_box(self, box, color=None):
         geo = p3js.BoxBufferGeometry(width=box.xsize, 
@@ -115,61 +119,68 @@ class ThreeJsViewer(object):
                                      depthSegments=box.ysize)
         mat = material_from_color(color)
         mesh = p3js.Mesh(geometry=geo, material=mat)
-        mesh.position = list(box.frame.point + Vector(box.xsize/2, box.ysize/2, box.zsize/2))
-        mesh.quaternion = box.frame.quaternion.xyzw
+        Tinit = Translation([box.xsize/2, box.ysize/2, box.zsize/2])
+        Sc, Sh, R, T, P = (Transformation.from_frame(box.frame) * Tinit).decompose()
+        mesh.quaternion = R.quaternion.xyzw
+        mesh.position = list(T.translation)
         self.geometry.append(mesh)
+        return mesh
+    
+    def draw_sphere(self, sphere, color=None, segments=32):
+        geo = p3js.SphereBufferGeometry(sphere.radius, segments, segments)
+        mat = material_from_color(color)
+        mesh = p3js.Mesh(geometry=geo, material=mat)
+        mesh.position = list(sphere.point)
+        self.geometry.append(mesh)
+        return mesh
 
-    def draw_mesh(self, mesh, color=None, id=None):
-        if color == None:
-            color = 0x777777
-        if id == None:
-            id = str(uuid.uuid1())
-        geo = mesh2mcg(mesh)
-        mat = mcg.MeshLambertMaterial(color=color)
-        viewer[id].set_object(mcg.Mesh(geo, mat))
+    def draw_mesh(self, mesh, color=None):
+        pass
 
     def draw_line(self, line, color, line_width=1):
         positions = [[list(line[0]), list(line[1])]]
         colors = [[color, color]]
         g = p3js.LineSegmentsGeometry(positions=positions, colors=colors)
         m = p3js.LineMaterial(linewidth=line_width, vertexColors='VertexColors')
-        self.geometry.append(p3js.LineSegments2(g, m))
+        line = p3js.LineSegments2(g, m)
+        self.geometry.append(line)
+        return line
+
+
+    def draw_axes(self, size=1):
+        amount = 5
+        lines = []
+        colors = []
+        for a in range(-amount*size, (amount+1)*size, size):
+            lines.append([[a, amount*size, 0], [a, -amount*size, 0]])
+            lines.append([[amount*size, a, 0], [-amount*size, a, 0]])
+            if a == 0:
+                colors += [[0.4, 0.4, 0.4], [0.4, 0.4, 0.4]]
+            else:
+                colors += [[0.6, 0.6, 0.6], [0.6, 0.6, 0.6]]
+        self.draw_lines(lines, colors)
+
     
     def draw_lines(self, lines, colors, line_width=1):
         positions = np.array(lines)
         colors = [[colors[i], colors[i]] for i, line in enumerate(lines)]
         g = p3js.LineSegmentsGeometry(positions=positions, colors=colors)
         m = p3js.LineMaterial(linewidth=line_width, vertexColors='VertexColors')
-        self.geometry.append(p3js.LineSegments2(g, m))
+        lines = p3js.LineSegments2(g, m)
+        self.geometry.append(lines)
+        return lines
     
-    def draw_frame(self, frame, size=1, line_width=1):
+    def draw_frame(self, frame, size=1, line_width=2):
         lines = [[frame.point, frame.point + frame.xaxis * size],
                  [frame.point, frame.point + frame.yaxis * size],
                  [frame.point, frame.point + frame.zaxis * size]]
         colors = [[1, 0, 0], [0, 1, 0], [0, 0, 1]]
-        self.draw_lines(lines, colors, line_width=line_width)
-        #self.draw_line([frame.point, frame.point + frame.xaxis * size], [1, 0, 0], line_width=line_width)
-        #self.draw_line([frame.point, frame.point + frame.yaxis * size], [0, 1, 0], line_width=line_width)
-        #self.draw_line([frame.point, frame.point + frame.zaxis * size], [0, 0, 1], line_width=line_width)
+        return self.draw_lines(lines, colors, line_width=line_width)
 
-    def draw_sphere(self, sphere, color=None, id=None):
-        import meshcat.transformations as tf
-        if color == None:
-            color = 0x777777
-        if id == None:
-            id = str(uuid.uuid1())
-        s = mcg.Sphere(sphere.radius)
-        viewer[id].set_object(s), mcg.MeshLambertMaterial(color=color)
-        viewer[id].set_transform(tf.translation_matrix(list(sphere.point)))
-        return id
-
-
-    def draw_mesh_edges(self, mesh, color=None, id=None):
+    def draw_mesh_edges(self, mesh, color=None):
         keys = list(mesh.edges())
         lines = []
         for u, v in keys:
-            lines.append({
-                'start': mesh.vertex_coordinates(u),
-                'end'  : mesh.vertex_coordinates(v),
-            })
-        viewer_draw_lines(viewer, lines, color, id)
+            lines.append([mesh.vertex_coordinates(u), mesh.vertex_coordinates(v)])
+        colors = [color] * len(lines)
+        return self.draw_lines(lines, colors)
