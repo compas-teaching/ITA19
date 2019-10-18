@@ -9,11 +9,6 @@ import pymesh
 import os
 
 def compas_mesh_to_obj_str(mesh):
-    filename = os.path.join(os.path.dirname(__file__), "tmp.obj")
-    pymesh.save_mesh(filename, mesh)
-    with open(filename) as file:  
-        return file.read() 
-    """
     lines = ["g object_1"]
     v, f = mesh.to_vertices_and_faces()
     for p in v:
@@ -25,7 +20,6 @@ def compas_mesh_to_obj_str(mesh):
             a, b, c, d = p
             lines.append("f {} {} {} {}".format(a+1, b+1, c+1, d+1))
     return "\n".join(lines)
-    """
 
 def mesh2mcg(mesh):
     contents = compas_mesh_to_obj_str(mesh)
