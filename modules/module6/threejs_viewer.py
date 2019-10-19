@@ -10,6 +10,7 @@ from compas.geometry import Rotation
 from compas.geometry import Translation
 from compas.geometry import Transformation
 from compas.utilities import flatten
+import compas
 
 def material_from_color(color=None):
     if color:
@@ -26,6 +27,13 @@ def draw_mesh(mesh, color=None):
     geo.exec_three_obj_method('computeFaceNormals')
     return p3js.Mesh(geometry=geo, material=p3js.MeshLambertMaterial(vertexColors='VertexColors'), position=[0, 0, 0])
 
+def draw_sphere(sphere, color=None, segments=32):
+    geo = p3js.SphereBufferGeometry(sphere.radius, segments, segments)
+    mat = material_from_color(color)
+    mesh = p3js.Mesh(geometry=geo, material=mat)
+    mesh.position = list(sphere.point)
+    return mesh
+
 
 class RobotArtist(BaseRobotArtist):
     
@@ -39,14 +47,13 @@ class RobotArtist(BaseRobotArtist):
         geometry.quaternion = [qx, qy, qz, qw]
         geometry.position = [R[0][3], R[1][3], R[2][3]]
 
-    def draw_geometry(self, mesh, color=None):
-        vertices, faces = mesh.to_vertices_and_faces()
-        hexcolor = rgb_to_hex(color[:3]) if color else '#cccccc'
-        vertexcolors = [hexcolor] * len(vertices)
-        faces = [f + [None, [vertexcolors[i] for i in f], None] for f in faces]
-        geo = p3js.Geometry(vertices=vertices, faces=faces)
-        geo.exec_three_obj_method('computeFaceNormals')
-        return p3js.Mesh(geometry=geo, material=p3js.MeshLambertMaterial(vertexColors='VertexColors'), position=[0, 0, 0])
+    def draw_geometry(self, geometry, color=None):
+        if type(geometry) == compas.datastructures.Mesh:
+            return draw_mesh(geometry, color)
+        elif type(geometry) ==  compas.geometry.Sphere:
+            return draw_sphere(geometry, color)
+        else:
+            raise ValueError("Unknown geometry")
     
     def _apply_transformation_on_transformed_link(self, item, transformation):
         # We transform absolute, so we need to calculate transformation + init 
@@ -66,15 +73,23 @@ class ThreeJsViewer(object):
         self.geometry = []
         self.draw_axes(size=1)
     
-   
-    def show(self, camera_position=[2.0, 5.0, 2.0], action=None):
+       
+    def show(self, camera_position=[2.0, 5.0, 2.0], action=None, geometry=None):
 
         self.camera.position = camera_position
 
         children = [p3js.AmbientLight(color='#dddddd'), self.camera]
         children += list(self.geometry)
+        if geometry:
+            children += geometry
 
         scene = p3js.Scene(children=children, background="#aaaaaa")
+
+        #gridHelper = p3js.GridHelper(10, 10)
+        #scene.add(gridHelper)
+        #axesHelper = p3js.AxesHelper(1)
+        #axesHelper.exec_three_obj_method('geometry.rotateX', -3.14159 / 2.0)
+        #scene.add(axesHelper)
 
         controls = p3js.OrbitControls(controlling=self.camera)
         controls.target = (2.0, 1.0, -2.0)
@@ -87,27 +102,44 @@ class ThreeJsViewer(object):
         else:
             display(renderer, action)
     
-    def create_action(self, obj, transformations, times, group_with=None):
+    def create_action(self, obj, transformations, times):
         if len(transformations) != len(times):
             raise ValueError("Pass equal amount of transformations and times")
         x, y, z, w = obj.quaternion
         Tinit = Rotation.from_quaternion([w, x, y, z]) * Translation(obj.position)
         positions = []
         quaternions = []
-        print(obj.children)
-        for i, M in enumerate(transformations):
+        for M in transformations:
             Sc, Sh, R, T, P = (M * Tinit).decompose()
             positions.append(list(T.translation))
             quaternions.append(R.quaternion.xyzw)
         position_track = p3js.VectorKeyframeTrack(name='.position', times=times, values=list(flatten(positions)))
-        rotation_track = p3js.VectorKeyframeTrack(name='.quaternion', times=times, values=list(flatten(quaternions)))
+        rotation_track = p3js.QuaternionKeyframeTrack(name='.quaternion', times=times, values=list(flatten(quaternions)))
         obj_clip = p3js.AnimationClip(tracks=[position_track, rotation_track])
-        
-        if group_with:
-            group = p3js.Group(children=[obj] + group_with)
-            obj_action = p3js.AnimationAction(p3js.AnimationMixer(group), obj_clip, group)
-        else:
-            obj_action = p3js.AnimationAction(p3js.AnimationMixer(obj), obj_clip, obj)
+        obj_action = p3js.AnimationAction(p3js.AnimationMixer(obj), obj_clip, obj)
+        return obj_action
+    
+    def create_group_action(self, objs, transformations, times):
+        # TODO: how to start multiple animations at once
+        if len(transformations) != len(times):
+            raise ValueError("Pass equal amount of transformations and times")
+        x, y, z, w = objs[0].quaternion
+        Tinit = Rotation.from_quaternion([w, x, y, z]) * Translation(objs[0].position)
+        positions = []
+        quaternions = []
+        for M in transformations:
+            Sc, Sh, R, T, P = (M * Tinit).decompose()
+            positions.append(list(T.translation))
+            quaternions.append(R.quaternion.xyzw)
+        position_track = p3js.VectorKeyframeTrack(name='.position', times=times, values=list(flatten(positions)))
+        rotation_track = p3js.QuaternionKeyframeTrack(name='.quaternion', times=times, values=list(flatten(quaternions)))
+
+        animation_group = p3js.AnimationObjectGroup()
+        animation_group.exec_three_obj_method('add', objs[0]) # this is not working
+
+        obj_clip = p3js.AnimationClip(tracks=[position_track, rotation_track])
+        mixer = p3js.AnimationMixer(animation_group)
+        obj_action = p3js.AnimationAction(mixer, obj_clip, animation_group)
         return obj_action
 
     def draw_box(self, box, color=None):
@@ -127,10 +159,7 @@ class ThreeJsViewer(object):
         return mesh
     
     def draw_sphere(self, sphere, color=None, segments=32):
-        geo = p3js.SphereBufferGeometry(sphere.radius, segments, segments)
-        mat = material_from_color(color)
-        mesh = p3js.Mesh(geometry=geo, material=mat)
-        mesh.position = list(sphere.point)
+        mesh = draw_sphere(sphere, color, segments)
         self.geometry.append(mesh)
         return mesh
 
