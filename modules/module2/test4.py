@@ -1,11 +1,13 @@
+import matplotlib.pyplot as plt
+
 from math import pi
 
 from compas.geometry import Point
 from compas.geometry import Vector
 from compas.geometry import Line
 from compas.geometry import Rotation
-
 from compas_plotters import Plotter2
+
 
 a = Point(0, 0, 0)
 b = Point(1, 0, 0)
@@ -25,17 +27,20 @@ plotter.add(c)
 
 plotter.add(ab)
 plotter.add(ac)
-
+ 
 # plotter.add(u, point=a)
 # plotter.add(v, point=a)
 
 R = Rotation.from_axis_and_angle([0.0, 0.0, 1.0], 10 * pi / 180.0)
 
-plotter.draw(pause=1.0)
+plotter.draw()
+plt.waitforbuttonpress()
 
 for i in range(9):
     b.transform(R)
     ab.end.transform(R)
-    plotter.redraw(pause=0.1)
+
+    plotter.redraw()
+    plt.waitforbuttonpress()
 
 plotter.show()

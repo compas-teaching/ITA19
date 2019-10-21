@@ -1,0 +1,46 @@
+update compas
+switch to plotters branch
+activate ita19-dev environment
+check if new plotters available
+update environment with nb_conda
+get ws files
+run notebooks
+check vs code
+
+plotters
+old vs new
+plot primitives
+animated plots
+
+what is cross product
+computation of cross product
+compare python based and numpy based calculation of multiple cross products
+CCW rotation vs CW rotation
+link to is_ccw
+where else is cross product used
+link to transformations (Rhino)
+
+what is SVD
+where is SVD used
+information obtained from SVD
+SVD in compas
+
+make pointcloud in Rhino
+compute principle components of pointcloud covariance matrix to find local frame
+compute bounding box using local frame
+
+assignments
+
+compas data structures overview
+how to use data structures
+get information out of data structures (questions)
+vertex normals
+smoothing
+subdivision
+mesh dual
+tributary areas
+(notice cross product)
+
+assignments
+
+outlook to modules
