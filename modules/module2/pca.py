@@ -51,7 +51,7 @@ def draw_frame(frame, layer):
     compas_rhino.draw_lines(lines, layer=layer, clear=False)
 
 # ==============================================================================
-# Script
+# Algorithm
 # ==============================================================================
 
 cloud1 = pointcloud(20, (0, 10), (0, 5), (0, 3))
@@ -87,14 +87,13 @@ bbox4 = transform_points(bbox3, T.inverse())
 # Visualisation
 # ==============================================================================
 
-draw_cloud(cloud1, (255, 255, 255), "Cloud1")
-draw_bbox(bbox1, (255, 255, 255), "BBox1")
+draw_cloud(cloud1, (0, 0, 0), "Cloud1")
+draw_bbox(bbox1, (0, 0, 0), "BBox1")
 
-draw_cloud(cloud2, (0, 0, 0), "Cloud2")
-draw_bbox(bbox2, (0, 0, 0), "BBox2")
+draw_cloud(cloud2, (255, 0, 0), "Cloud2")
 
-draw_cloud(cloud3, (183, 183, 183), "Cloud3")
-draw_bbox(bbox3, (183, 183, 183), "BBox3")
+draw_cloud(cloud3, (255, 255, 255), "Cloud3")
+draw_bbox(bbox3, (255, 255, 255), "BBox3")
 
 draw_bbox(bbox4, (255, 0, 0), "BBox4")
 
