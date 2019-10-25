@@ -15,3 +15,14 @@ mesh = Mesh.from_obj(FILE)
 bfo = breadth_first_ordering(mesh.adjacency, 0)
 
 print(bfo)
+
+n = mesh.number_of_vertices()
+
+plotter = MeshPlotter(mesh, figsize=(16, 10))
+plotter.draw_vertices(
+    text={key: key for key in mesh.vertices()},
+    radius=0.2,
+    facecolor={key: i_to_red(1 - index / n) for index, key in enumerate(bfo)})
+
+plotter.draw_edges()
+plotter.show()
