@@ -1,20 +1,7 @@
-# Assignment
+# Module 0
 
-## Task 1
-Write a function that returns `True` if the rotation from `AB` onto `AC` is counter-clockwise (ccw).
+The first three weeks of the COMPAS ITA course focus on getting the basics ready for the topic modules:
 
-`A`, `B`, `C` are points in the xy-plane...
-
-```python
-def is_ccw(A, B, C):
-  # .....
-```
-
-## Task 2
-Read points from the `points.txt` text file in this folder. Each line contains a tuple with three 2D points. Each point is a tuple of 2 floats (`x,y`), e.g. `((1895.0943, 2291.517), (589.296, 207.324), (1360.998, 1611.965))`.
-
-Calculate and print out `is_ccw` for each tuple of points.
-
-## Extra brownie points 🍪
-
-Given a point `P` and a normal that span a plane in 3D space, return an arbitrary vector that rests within that plane.
+* **Week 1:** Introduction - [Slides](../../slides/week-01_COMPAS-basics.pdf)
+* **Week 2:** Getting Started - [Slides](../../slides/week-02_Getting_started.pdf), [Assignment](01_getting_started/)
+* **Week 3:** Data structures and Geometry - [Slides](../../slides/week-03_Geometry-and-Data-Structures.pdf), [Assignment](02_datastructures_and_geometry/)
