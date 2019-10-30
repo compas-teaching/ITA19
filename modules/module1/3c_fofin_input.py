@@ -28,7 +28,14 @@ shell = Shell.from_lines(lines, delete_boundary_face=True)
 # Geometric key map
 # ==============================================================================
 
-gkey_key = shell.gkey_key()
+gkey_key = {}
+for key in shell.vertices():
+    xyz = shell.vertex_coordinates(key)
+    gkey = geometric_key(xyz)
+    gkey_key[gkey] = key
+    print(gkey, xyz)
+
+# gkey_key = shell.gkey_key()
 
 # ==============================================================================
 # Vertex attributes
@@ -36,6 +43,7 @@ gkey_key = shell.gkey_key()
 
 for point in points:
     gkey = geometric_key(point)
+    print(gkey, point)
     if gkey in gkey_key:
         key = gkey_key[gkey]
         shell.set_vertex_attribute(key, 'is_fixed', True)
