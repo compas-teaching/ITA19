@@ -17,7 +17,6 @@ lines = compas_rhino.get_line_coordinates(guids)
 
 guids = compas_rhino.select_points()
 points = compas_rhino.get_point_coordinates(guids)
-names = compas_rhino.get_object_names(guids)
 
 # ==============================================================================
 # Shell
@@ -35,16 +34,17 @@ gkey_key = shell.gkey_key()
 # Vertex attributes
 # ==============================================================================
 
-for name, point in zip(names, points):
+for point in points:
     gkey = geometric_key(point)
     if gkey in gkey_key:
         key = gkey_key[gkey]
         shell.set_vertex_attribute(key, 'is_fixed', True)
-        if name:
-            parts = name.split('=')
-            if len(parts) == 2:
-                z = float(parts[1])
-                shell.set_vertex_attribute(key, 'z', z)
+
+high = 16
+higher = 1
+
+shell.set_vertex_attribute(high, 'z', 5.0)
+shell.set_vertex_attribute(higher, 'z', 7.0)
 
 # ==============================================================================
 # Edge attributes

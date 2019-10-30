@@ -15,10 +15,6 @@ from fofin.shellartist import ShellArtist
 guids = compas_rhino.select_lines()
 lines = compas_rhino.get_line_coordinates(guids)
 
-guids = compas_rhino.select_points()
-points = compas_rhino.get_point_coordinates(guids)
-names = compas_rhino.get_object_names(guids)
-
 # ==============================================================================
 # Shell
 # ==============================================================================
@@ -26,25 +22,16 @@ names = compas_rhino.get_object_names(guids)
 shell = Shell.from_lines(lines, delete_boundary_face=True)
 
 # ==============================================================================
-# Geometric key map
-# ==============================================================================
-
-gkey_key = shell.gkey_key()
-
-# ==============================================================================
 # Vertex attributes
 # ==============================================================================
 
-for name, point in zip(names, points):
-    gkey = geometric_key(point)
-    if gkey in gkey_key:
-        key = gkey_key[gkey]
-        shell.set_vertex_attribute(key, 'is_fixed', True)
-        if name:
-            parts = name.split('=')
-            if len(parts) == 2:
-                z = float(parts[1])
-                shell.set_vertex_attribute(key, 'z', z)
+corners = list(shell.vertices_where({'vertex_degree': 3}))
+high = 16
+higher = 1
+
+shell.set_vertices_attribute('is_fixed', True, keys=corners)
+shell.set_vertex_attribute(higher, 'z', 7.0)
+shell.set_vertex_attribute(high, 'z', 5.0)
 
 # ==============================================================================
 # Edge attributes
