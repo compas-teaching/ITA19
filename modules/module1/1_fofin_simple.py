@@ -58,7 +58,6 @@ mesh.set_edges_attribute('q', 5.0, keys=boundary)
 # FoFin input
 # ==============================================================================
 
-key_index = mesh.key_index()
 xyz = mesh.get_vertices_attributes('xyz')
 fixed = list(mesh.vertices_where({'is_fixed': True}))
 loads = mesh.get_vertices_attributes(('px', 'py', 'pz'))
@@ -95,6 +94,7 @@ artist = MeshArtist(mesh, layer="Mesh")
 artist.clear_layer()
 artist.draw_vertices()
 artist.draw_edges()
+artist.draw_faces()
 
 forces = []
 for u, v, attr in mesh.edges(True):
