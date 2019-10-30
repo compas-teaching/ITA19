@@ -4,10 +4,10 @@ path = os.path.dirname(__file__)
 images_folder = os.path.join(path, "images")
 
 for file in os.listdir(images_folder):
-	print(file)
 	name, ext = os.path.splitext(file)
 	if ext == '.svg':
 		fullfilename = os.path.join(images_folder, file)
+		print(file)
 		with open(fullfilename, 'r') as f:
 			data = f.read()
 

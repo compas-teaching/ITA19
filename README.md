@@ -32,14 +32,14 @@ Week | Date | Lead | Title | Description | Links
 ---- | ---- | ---- | ----- | ----------- | -------
 1 | Oct 2 | BRG | Introduction | Course overview, COMPAS intro | [Slides](slides/week-01_COMPAS-basics.pdf)
 2 | Oct 9 | GKR | Getting Started | Development Tools 101<br>Python 101<br>COMPAS 101 | [Slides](slides/week-02_Getting_started.pdf), [Assignment](modules/module0/01_getting_started/README.md)
-3 | Oct 16 | BRG | Data structures and Geometry | Basic theory and examples | [Slides](slides/week-03_Geometry-and-Data-Structures.pdf), [Assignment](modules/module0/02_datastructures_and_geometry/README.md)
-4 | Oct 23 | BRG | Module 1: Structural Design | **Theory:** Form Finding methods
-5 | Oct 30 | BRG | Module 1: Structural Design | **Case study:** The HiLo cablenet formwork system
-6 | Nov 6 | GKR | Module 2: Robotic Assembly | **Theory:** Robotic fabrication planning and executing
-7 | Nov 13 | GKR | Module 2: Robotic Assembly | **Case study:** Robotic assembly of a brick wall
-8 | Nov 20 | DBT | Module 3: Volumetric Modeling | **Theory:** Modelling with signed distance functions
-9 | Nov 27 | DBT | Module 3: Volumetric Modeling | **Case study:** Modelling of a node
-10 | Dec 4 | BRG | Next Steps | Using COMPAS in your own work
+3 | Oct 23 | BRG | Data structures and Geometry | Basic theory and examples | [Slides](slides/week-03_Geometry-and-Data-Structures.pdf), [Assignment](modules/module0/02_datastructures_and_geometry/README.md)
+4 | Oct 30 | BRG | Module 1: Structural Design | **Theory:** Form Finding methods
+5 | Nov 6 | BRG | Module 1: Structural Design | **Case study:** The HiLo cablenet formwork system
+6 | Nov 13 | GKR | Module 2: Robotic Assembly | **Theory:** Robotic fabrication planning and executing
+7 | Nov 20 | GKR | Module 2: Robotic Assembly | **Case study:** Robotic assembly of a brick wall
+8 | Nov 27 | DBT | Module 3: Volumetric Modeling | **Theory:** Modelling with signed distance functions
+9 | Dec 4 | DBT | Module 3: Volumetric Modeling | **Case study:** Modelling of a node
+10 | Dec 11 | BRG | Next Steps | Using COMPAS in your own work
 
 ## Join us on slack
 
