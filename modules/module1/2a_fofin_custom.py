@@ -12,7 +12,6 @@ from compas_rhino.artists import MeshArtist
 # Proxy
 # ==============================================================================
 
-# from compas.numerical import fd_numpy
 from compas.rpc import Proxy
 numerical = Proxy('compas.numerical')
 fd_numpy = numerical.fd_numpy
@@ -30,25 +29,19 @@ class Shell(Mesh):
         self.default_edge_attributes.update({'q': 1.0, 'f': 0.0, 'rx': 0.0, 'ry': 0.0, 'rz': 0.0})
 
     def fofin(self):
-        key_index = self.key_index()
-        xyz = self.get_vertices_attributes('xyz')
-        fixed = list(self.vertices_where({'is_fixed': True}))
-        loads = self.get_vertices_attributes(('px', 'py', 'pz'))
-        edges = list(self.edges())
-        q = self.get_edges_attribute('q')
-        xyz, q, f, l, r = fd_numpy(xyz, edges, fixed, q, loads)
-        for key, attr in self.vertices(True):
-            attr['x'] = xyz[key][0]
-            attr['y'] = xyz[key][1]
-            attr['z'] = xyz[key][2]
-            attr['rx'] = r[key][0]
-            attr['ry'] = r[key][1]
-            attr['rz'] = r[key][2]
-        for index, (u, v, attr) in enumerate(self.edges(True)):
-            attr['f'] = f[index][0]
+        # fofin input
+        xyz = mesh.get_vertices_attributes('xyz')
+        fixed = list(mesh.vertices_where({'is_fixed': True}))
+        loads = mesh.get_vertices_attributes(('px', 'py', 'pz'))
+        edges = list(mesh.edges())
+        q = mesh.get_edges_attribute('q')
+        # fofin run
+        ...
+        # fofin update
+        ...
 
 
-class ShellArtist(MeshArtist):
+class ShellArtist(...):
     
     def draw_forces(self, scale=1.0, layer="Mesh::Forces"):
         forces = []
@@ -62,21 +55,10 @@ class ShellArtist(MeshArtist):
                 'end': end,
                 'radius': radius,
                 'color': (255, 0, 0)})
-        compas_rhino.draw_cylinders(forces, layer=layer, clear=True)
+        compas_rhino.draw_cylinders(forces, layer=..., clear=True)
 
     def draw_reactions(self, scale=1.0, layer="Mesh::Reactions"):
-        reactions = []
-        for key, attr in self.datastructure.vertices_where({'is_fixed': True}, True):
-            reaction = [attr['rx'], attr['ry'], attr['rz']]
-            vector = scale_vector(reaction, -scale)
-            start = self.datastructure.vertex_coordinates(key)
-            end = add_vectors(start, vector)
-            reactions.append({
-                'start': start,
-                'end': end,
-                'arrow': 'end',
-                'color': (0, 255, 0)})
-        compas_rhino.draw_lines(reactions, layer=layer, clear=True)
+        ...
 
 
 # ==============================================================================

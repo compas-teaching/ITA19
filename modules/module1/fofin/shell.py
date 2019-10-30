@@ -17,7 +17,6 @@ class Shell(Mesh):
         self.default_edge_attributes.update({'q': 1.0, 'f': 0.0, 'rx': 0.0, 'ry': 0.0, 'rz': 0.0})
 
     def fofin(self):
-        key_index = self.key_index()
         xyz = self.get_vertices_attributes('xyz')
         fixed = list(self.vertices_where({'is_fixed': True}))
         loads = self.get_vertices_attributes(('px', 'py', 'pz'))
@@ -34,3 +33,10 @@ class Shell(Mesh):
         for index, (u, v, attr) in enumerate(self.edges(True)):
             attr['f'] = f[index][0]
 
+
+# ==============================================================================
+# Main
+# ==============================================================================
+
+if __name__ == '__main__':
+    pass

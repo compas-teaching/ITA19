@@ -17,7 +17,7 @@ from compas_rhino.artists import MeshArtist
 
 # from compas.numerical import fd_numpy
 from compas.rpc import Proxy
-numerical = Proxy('...')
+numerical = Proxy('compas.numerical')
 fd_numpy = numerical.fd_numpy
 
 # ==============================================================================
@@ -59,12 +59,12 @@ mesh.set_edges_attribute('q', 5.0, keys=boundary)
 # FoFin input
 # ==============================================================================
 
-xyz = mesh.get_vertices_...('xyz')
-fixed = ...(mesh.vertices_where({'is_fixed': True}))
-... = mesh.get_vertices_attributes(('...', '...', '...'))
+xyz = mesh.get_vertices_attributes('xyz')
+fixed = list(mesh.vertices_where({'is_fixed': True}))
+loads = mesh.get_vertices_attributes(('px', 'py', 'pz'))
 
-edges = ...(mesh.edges())
-... = mesh.get_..._attribute('q')
+edges = list(mesh.edges())
+q = mesh.get_edges_attribute('q')
 
 # ==============================================================================
 # Fofin run
@@ -80,12 +80,12 @@ for key, attr in mesh.vertices(True):
     attr['x'] = xyz[key][0]
     attr['y'] = xyz[key][1]
     attr['z'] = xyz[key][2]
-    attr['...'] = r[key][...]
-    attr['...'] = r[key][...]
-    attr['...'] = r[key][...]
+    attr['rx'] = r[key][0]
+    attr['ry'] = r[key][1]
+    attr['rz'] = r[key][2]
 
-for ..., (u, v, attr) in enumerate(mesh.edges(True)):
-    attr['f'] = ...[index][0]
+for index, (u, v, attr) in enumerate(mesh.edges(True)):
+    attr['f'] = f[index][0]
 
 # ==============================================================================
 # Visualize result
@@ -97,3 +97,33 @@ artist.draw_vertices(
     color={key: (255, 0, 0) for key in mesh.vertices_where({'is_fixed': True})})
 artist.draw_edges()
 artist.draw_faces()
+
+forces = []
+for ..., ..., ... in mesh.edges(True):
+    force = attr['...']
+    ... = mesh.vertex_coordinates(u)
+    ... = mesh.vertex_coordinates(v)
+    radius = 0.01 * force
+    forces.append({
+        'start': start,
+        'end': end,
+        'radius': radius,
+        'color': (..., ..., ...)})
+
+compas_rhino.draw_cylinders(
+    forces, layer="Mesh::Forces", clear=True)
+
+reactions = []
+for key, attr in mesh.vertices_where({'...': True}, True):
+    reaction = [attr['...'], attr['...'], attr['...']]
+    vector = scale_vector(reaction, ...)
+    start = mesh.vertex_coordinates(key)
+    end = add_vectors(start, vector)
+    reactions.append({
+        'start': start,
+        'end': end,
+        'arrow': 'end',
+        'color': (..., ..., ...)})
+
+compas_rhino.draw_lines(
+    reactions, layer="Mesh::Reactions", clear=True)
