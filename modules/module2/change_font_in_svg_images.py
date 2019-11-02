@@ -7,7 +7,6 @@ for file in os.listdir(images_folder):
 	name, ext = os.path.splitext(file)
 	if ext == '.svg':
 		fullfilename = os.path.join(images_folder, file)
-		print(file)
 		with open(fullfilename, 'r') as f:
 			data = f.read()
 
@@ -22,6 +21,7 @@ for file in os.listdir(images_folder):
 
 		for old, new in zip(txt_old, txt_new):
 			if data.find(old) != -1:
+				print(file)
 				data = data.replace(old, new)
 
 		with open(fullfilename, 'w') as f:
