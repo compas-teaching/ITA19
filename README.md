@@ -33,7 +33,7 @@ Week | Date | Lead | Title | Description | Links
 1 | Oct 2 | BRG | Introduction | Course overview, COMPAS intro | [Slides](slides/week-01_COMPAS-basics.pdf)
 2 | Oct 9 | GKR | Getting Started | Development Tools 101<br>Python 101<br>COMPAS 101 | [Slides](slides/week-02_Getting_started.pdf), [Assignment](modules/module0/01_getting_started/README.md)
 3 | Oct 23 | BRG | Data structures and Geometry | Basic theory and examples | [Slides](slides/week-03_Geometry-and-Data-Structures.pdf), [Assignment](modules/module0/02_datastructures_and_geometry/README.md)
-4 | Oct 30 | BRG | Module 1: Structural Design | **Theory:** Form Finding methods
+4 | Oct 30 | BRG | Module 1: Structural Design | **Theory:** Form Finding methods | [Slides](https://docs.google.com/presentation/d/1TG2U2d6YnLHZvvsrhm00UIgFkjcQAdi41PEJZ_ZxWVw/edit?usp=sharing), [Assignment](modules/module1/assignments/README.md)
 5 | Nov 6 | BRG | Module 1: Structural Design | **Case study:** The HiLo cablenet formwork system
 6 | Nov 13 | GKR | Module 2: Robotic Assembly | **Theory:** Robotic fabrication planning and executing
 7 | Nov 20 | GKR | Module 2: Robotic Assembly | **Case study:** Robotic assembly of a brick wall
