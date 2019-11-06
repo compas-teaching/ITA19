@@ -59,7 +59,6 @@ def viewer_draw_sphere(viewer, sphere, color=None, id=None):
     viewer[id].set_transform(tf.translation_matrix(list(sphere.point)))
     return id
 
-
 def viewer_draw_mesh_edges(viewer, mesh, color=None, id=None):
     keys = list(mesh.edges())
     lines = []
@@ -100,83 +99,3 @@ class MeshCatViewer(Visualizer):
     def draw_sphere(self, sphere, color=None, id=None):
         return viewer_draw_sphere(self, sphere, id)
 
-
-
-import pythreejs as p3js
-from IPython.display import display
-
-class ThreeJsViewer():
-
-    def draw_mesh(self, mesh, color=None, id=None):
-        v, f = mesh.to_vertices_and_faces()
-        return p3js.Geometry(vertices=v, faces=f)
-    
-
-
-"""
-import compas
-from compas.geometry import Frame
-from compas.geometry import Box
-from compas.datastructures import Mesh
-from compas.datastructures import mesh_quads_to_triangles
-
-import pythreejs as p3js
-from IPython.display import display
-
-frame = Frame([1, 0, 0], [-0.45, 0.1, 0.3], [1, 0, 0])
-width, length, height = 10, 10, 10
-
-box = Box(frame, width, length, height)
-
-#mesh = Mesh.from_obj(compas.get('hypar.obj'))
-mesh = mesh.from_vertices_and_faces(box.vertices, box.faces)
-mesh_quads_to_triangles(mesh)
-
-v, f = mesh.to_vertices_and_faces()
-# transform vertices
-v_t = [frame.represent_point_in_global_coordinates(p) for p in v]
-
-mesh_t = Mesh.from_vertices_and_faces(v_t, f)
-
-vertices = v
-faces = f
-
-print(v)
-print(f)
-
-vertexcolors = ['#777777'] * len(vertices)
-#vertexcolors = ['#000000', '#0000ff', '#00ff00', '#ff0000', '#00ffff', '#ff00ff', '#ffff00', '#ffffff']
-
-
-# Map the vertex colors into the 'color' slot of the faces
-faces = [f + [None, [vertexcolors[i] for i in f], None] for f in faces]
-
-geom = p3js.Geometry(vertices=vertices, faces=faces, colors=vertexcolors)
-geom.exec_three_obj_method('computeFaceNormals')
-
-# Create a mesh. Note that the material need to be told to use the vertex colors.
-m3 = p3js.Mesh(geometry=geom,
-          material=p3js.MeshLambertMaterial(vertexColors='VertexColors'),
-          position=[-0.5, -0.5, -0.5])
-
-#size = 10;
-#divisions = 10;
-#gridHelper = p3js.GridHelper(size, divisions);
-# Set up a scene and render it:
-cCube = p3js.PerspectiveCamera(position=[10, 10, 10], fov=20,
-                      children=[p3js.DirectionalLight(color='#ffffff', position=[-3, 5, 1], intensity=0.5)])
-scene = p3js.Scene(children=[m3, cCube, p3js.AmbientLight(color='#dddddd')])
-
-
-rendererCube = p3js.Renderer(camera=cCube, background='black', background_opacity=1,
-                        scene=sceneCube, controls=[p3js.OrbitControls(controlling=cCube)])
-
-display(rendererCube)
-"""
-
-if __name__ == "__main__":
-    import compas
-    #mesh = Mesh.from_obj(compas.get("faces.obj"))
-    #print(compas_mesh_to_obj_str(mesh))
-    #pymesh
-    mesh = pymesh.load_mesh(compas.get("faces.obj"))

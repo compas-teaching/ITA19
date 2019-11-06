@@ -110,7 +110,7 @@ class ThreeJsViewer(object):
         positions = []
         quaternions = []
         for M in transformations:
-            Sc, Sh, R, T, P = (M * Tinit).decompose()
+            Sc, Sh, R, T, P = (M * Tinit).decomposed()
             positions.append(list(T.translation))
             quaternions.append(R.quaternion.xyzw)
         position_track = p3js.VectorKeyframeTrack(name='.position', times=times, values=list(flatten(positions)))
@@ -128,7 +128,7 @@ class ThreeJsViewer(object):
         positions = []
         quaternions = []
         for M in transformations:
-            Sc, Sh, R, T, P = (M * Tinit).decompose()
+            Sc, Sh, R, T, P = (M * Tinit).decomposed()
             positions.append(list(T.translation))
             quaternions.append(R.quaternion.xyzw)
         position_track = p3js.VectorKeyframeTrack(name='.position', times=times, values=list(flatten(positions)))
@@ -152,7 +152,7 @@ class ThreeJsViewer(object):
         mat = material_from_color(color)
         mesh = p3js.Mesh(geometry=geo, material=mat)
         Tinit = Translation([box.xsize/2, box.ysize/2, box.zsize/2])
-        Sc, Sh, R, T, P = (Transformation.from_frame(box.frame) * Tinit).decompose()
+        Sc, Sh, R, T, P = (Transformation.from_frame(box.frame) * Tinit).decomposed()
         mesh.quaternion = R.quaternion.xyzw
         mesh.position = list(T.translation)
         self.geometry.append(mesh)
