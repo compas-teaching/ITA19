@@ -4,12 +4,14 @@ import numpy as np
 from compas.utilities import rgb_to_hex
 from compas.utilities import hex_to_rgb
 from compas_fab.artists import BaseRobotArtist
+from compas.geometry import Frame
 from compas.geometry import Vector
 from compas.geometry import quaternion_from_matrix
 from compas.geometry import Rotation
 from compas.geometry import Translation
 from compas.geometry import Transformation
 from compas.utilities import flatten
+from compas.datastructures import mesh_quads_to_triangles
 import compas
 
 def material_from_color(color=None):
@@ -18,9 +20,9 @@ def material_from_color(color=None):
     else:
         return p3js.MeshLambertMaterial(color='#cccccc')
 
-def draw_mesh(mesh, color=None):
+def draw_mesh(mesh, hexcolor):
+    mesh_quads_to_triangles(mesh)
     vertices, faces = mesh.to_vertices_and_faces()
-    hexcolor = rgb_to_hex(color[:3]) if color else '#cccccc'
     vertexcolors = [hexcolor] * len(vertices)
     faces = [f + [None, [vertexcolors[i] for i in f], None] for f in faces]
     geo = p3js.Geometry(vertices=vertices, faces=faces)
@@ -32,6 +34,17 @@ def draw_sphere(sphere, color=None, segments=32):
     mat = material_from_color(color)
     mesh = p3js.Mesh(geometry=geo, material=mat)
     mesh.position = list(sphere.point)
+    return mesh
+
+def draw_cylinder(cylinder, color=None, radius_segments=8):
+    geo = p3js.CylinderBufferGeometry(radiusTop=cylinder.circle.radius, 
+                                      radiusBottom=cylinder.circle.radius, 
+                                      height=cylinder.height, 
+                                      radiusSegments=radius_segments)
+    mat = material_from_color(color)
+    mesh = p3js.Mesh(geometry=geo, material=mat)
+    mesh.position = list(cylinder.circle.plane.point)
+    mesh.quaternion = list(Frame.from_plane(cylinder.circle.plane).quaternion.xyzw)
     return mesh
 
 
@@ -48,17 +61,24 @@ class RobotArtist(BaseRobotArtist):
         geometry.position = [R[0][3], R[1][3], R[2][3]]
 
     def draw_geometry(self, geometry, color=None):
+        if not color:
+            color = '#cccccc'
+        else:
+            color = rgb_to_hex(255 * color[0], 255 * color[1], 255 * color[2])
         if type(geometry) == compas.datastructures.Mesh:
             return draw_mesh(geometry, color)
         elif type(geometry) ==  compas.geometry.Sphere:
             return draw_sphere(geometry, color)
+        elif type(geometry) ==  compas.geometry.Cylinder:
+            return draw_cylinder(geometry, color)
         else:
-            raise ValueError("Unknown geometry")
-    
+            raise NotImplementedError
+
     def _apply_transformation_on_transformed_link(self, item, transformation):
         # We transform absolute, so we need to calculate transformation + init 
         absolute_transformation = transformation * item.init_transformation
-        self.transform(item.native_geometry, absolute_transformation)
+        for geo in item.native_geometry:
+            self.transform(geo, absolute_transformation)
         item.current_transformation = transformation
 
 class ThreeJsViewer(object):
