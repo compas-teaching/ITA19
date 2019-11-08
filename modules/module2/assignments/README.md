@@ -15,7 +15,7 @@
 1. Build your own robot with a certain number n of links and n - 1 joints. 
 1. Create a `Configuration` with certain values and the correct joint types.
 1. Create a `RobotArtist` of your preferance (e.g. `compas_fab.ghpython` or `compas_fab.rhino`)
-1. Use the artist to `update` the robot with the created configuration, such that it configures into the letter of your choice.
+1. Use the artist to `update` the robot with the created configuration, such that it configures into the letter of your choice (or any other identifiable figure).
 
 <div align="center"><br><img src="../images/assignment1_2.jpg" width="600" /></div>
 
