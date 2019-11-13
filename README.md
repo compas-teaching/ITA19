@@ -47,13 +47,23 @@ https://tinyurl.com/yxse82a7
 
 ## Jupyter and extensions
 
-If you have Anaconda installed, then jupyter is already installed. If not, then install jupyter with pip.
+Make sure you install `jupyter` and extensions in the environment you are using:
+
+    conda install jupyter
+    conda install jupyter_contrib_nbextensions jupyter_nbextensions_configurator
 
 To run the jupyter notebook, you simply have to type:
 
     jupyter notebook
 
 in your command line.
+
+### Activating extensions
+
+From the `Nbextensions` tab in the notebook, install the following extensions:
+
+1. Split Cells Notebook: Enable split cells in Jupyter notebooks
+2. RISE: allows you to instantly turn your Jupyter Notebooks into a slideshow. 
 
 ### Configure workspace
 
@@ -72,16 +82,3 @@ or
 If you want jupyter to open in a different directory, then change the following line:
 
     c.NotebookApp.notebook_dir = 'YOUR_PREFERRED_PATH'
-
-### Download nbextensions
-
-To install nbextensions, execute the commands below in Anaconda Prompt:
-
-    conda install jupyter_contrib_nbextensions jupyter_nbextensions_configurator
-
-After installing, restart the Jupyter notebook, and you can observe a new tab Nbextensions added to the menu.
-Install the following extensions:
-
-1. Split Cells Notebook - Enable split cells in Jupyter notebooks
-
-2. RISE - allows you to instantly turn your Jupyter Notebooks into a slideshow. 
