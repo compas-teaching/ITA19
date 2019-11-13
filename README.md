@@ -49,7 +49,7 @@ https://tinyurl.com/yxse82a7
 
 Make sure you install `jupyter` and extensions in the environment you are using:
 
-    conda install jupyter jupyter_contrib_nbextensions jupyter_nbextensions_configurator --yes
+    conda install jupyter jupyter_contrib_nbextensions jupyter_nbextensions_configurator rise pythreejs --yes
 
 To run the jupyter notebook, you simply have to type:
 
