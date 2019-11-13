@@ -19,7 +19,7 @@ frame = Frame([0.4, 0.3, 0.4], [0, 1, 0], [0, 0, 1])
 tolerance_position = 0.001
 tolerance_axes = [math.radians(1)] * 3
 
-with RosClient() as client:
+with RosClient('localhost') as client:
     robot = Robot(client) 
     
     start_configuration = Configuration.from_revolute_values([-0.042, 4.295, 0, -3.327, 4.755, 0.])

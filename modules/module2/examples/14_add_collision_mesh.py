@@ -1,5 +1,3 @@
-"""Example: add a floor to the planning scene
-"""
 import time
 
 from compas.datastructures import Mesh
