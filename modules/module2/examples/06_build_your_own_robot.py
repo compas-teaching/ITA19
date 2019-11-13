@@ -40,7 +40,7 @@ robot.add_joint("joint2", Joint.CONTINUOUS, link1, link2, origin, axis)
 
 artist = RobotArtist(robot)
 
-# Exersice: Update the robot's configuration
+# Exercise: Update the robot's configuration
 artist.update...
 
 artist.draw_visual()
