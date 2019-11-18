@@ -7,6 +7,6 @@ from compas_fab.backends import RosFileServerLoader
 compas.PRECISION = '12f'
 
 # Load robot and its geometry
-with RosClient() as ros:
+with RosClient('localhost') as ros:
     robot = ros.load_robot(load_geometry=True)
     print(robot.model)
