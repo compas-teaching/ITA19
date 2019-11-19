@@ -7,6 +7,7 @@ from compas_fab.robots import Tool
 HERE = os.path.dirname(__file__)
 DATA = os.path.abspath(os.path.join(HERE, "..", "data"))
 
+# create tool from json
 filepath = os.path.join(DATA, "vacuum_gripper.json")
 tool = Tool.from_json(filepath)
 
@@ -28,7 +29,7 @@ with RosClient('localhost') as client:
     frames = [picking_frame, savelevel_picking_frame]
 
     # 4. Convert frames to tool0_frames
-    frames_tool0 = robot.to_tool0_frames(frames)
+    frames_tool0 = robot.from_attached_tool_to_tool0(frames)
 
     trajectory = robot.plan_cartesian_motion(frames_tool0,
                                              start_configuration,

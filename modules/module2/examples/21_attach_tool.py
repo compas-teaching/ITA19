@@ -22,5 +22,5 @@ with RosClient('localhost') as client:
     scene.add_attached_tool()
 
     # now we can convert frames at robot's tool tip and flange
-    frame_tcf = Frame((-0.309, -0.046, -0.266), (0.276, 0.926, -0.256), (0.879, -0.136, 0.456))
-    frame_tcf0 = robot.to_tool0_frame(frame_tcf)
+    frames_tcf = [Frame((-0.309, -0.046, -0.266), (0.276, 0.926, -0.256), (0.879, -0.136, 0.456))]
+    frames_tcf0 = robot.from_attached_tool_to_tool0(frames_tcf)
