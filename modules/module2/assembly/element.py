@@ -1,66 +1,138 @@
-from __future__ import print_function
 from __future__ import absolute_import
 from __future__ import division
+from __future__ import print_function
 
 import json
 
+from compas.datastructures import Mesh
 from compas.geometry import Frame
-from compas.geometry import Transformation
-from compas.datastructures import mesh_transform
+
+from .utilities import _deserialize_from_data
+from .utilities import _serialize_to_data
 
 __all__ = ['Element']
 
+
 class Element(object):
-    """A data structure for the individual elements of a discrete element assembly.
+    """Data structure representing a discrete elements of an assembly.
 
     Attributes
     ----------
-    name : str
-        The name that identifies the element.
     frame : :class:`compas.geometry.Frame`
         The frame of the element.
-    gripping_frame : :class:`compas.geometry.Frame`
-        The gripping frame of the element.
-        Defaults to the frame.
 
     Examples
     --------
-    from compas.datastructures import Mesh
-    frame = Frame.worldXY()
-    element = Element(frame)
-    mesh = Mesh.from_polyhedron(4)
-    ...
+    >>> from compas.datastructures import Mesh
+    >>> from compas.geometry import Box
+    >>> element = Element.from_box(Box(Frame.worldXY(), ))
+
     """
 
-
-    def __init__(self, frame, mesh=None, gripping_frame=None):
+    def __init__(self, frame):
         super(Element, self).__init__()
         self.frame = frame
-        self.gripping_frame = gripping_frame or frame
-        self.mesh = mesh
+        self._gripping_frame = None
+        self._source = None
+        self._mesh = None
+
+    @classmethod
+    def from_mesh(cls, mesh, frame):
+        """Construct an element from a mesh.
+        
+        Parameters
+        ----------
+        mesh : :class:`Mesh`
+            Mesh datastructure.
+        frame : :class:`Frame`
+            Origin frame of the element.
+
+        Returns
+        -------
+        :class:`Element`
+            New instance of element.
+        """
+        element = cls(frame)
+        element._source = mesh
+        return element
+
+    @classmethod
+    def from_shape(cls, shape, frame):
+        """Construct an element from a shape primitive.
+
+        Parameters
+        ----------
+        shape : :class:`compas.geometry.Shape`
+            Shape primitive describing the element.
+        frame : :class:`Frame`
+            Origin frame of the element.
+
+        Returns
+        -------
+        :class:`Element`
+            New instance of element.
+        """
+        element = cls(frame)
+        element._source = shape
+        return element
+
+    @classmethod
+    def from_box(cls, box):
+        """Construct an element from a box primitive.
+        
+        Parameters
+        ----------
+        box : :class:`compas.geometry.Box`
+            Box primitive describing the element.
+        
+        Returns
+        -------
+        :class:`Element`
+            New instance of element.
+        """
+        return cls.from_shape(box, box.frame)
+
+    @property
+    def mesh(self):
+        """Mesh of the element."""
+        if not self._source:
+            return None
+
+        if self._mesh:
+            return self._mesh
+
+        if isinstance(self._source, Mesh):
+            self._mesh = self._source
+        else:
+            self._mesh = Mesh.from_shape(self._source)
+
+        return self._mesh
+
+    @mesh.setter
+    def mesh(self, mesh):
+        self._source = self._mesh = mesh
 
     @property
     def frame(self):
-        """Frame: The element's frame."""
+        """Frame of the element."""
         return self._frame
 
     @frame.setter
     def frame(self, frame):
-        self._frame = Frame(frame[0], frame[1], frame[2])
+        self._frame = frame.copy()
 
     @property
     def gripping_frame(self):
-        """gripping_frame: The element's gripping frame."""
+        """Gripping frame of the element."""
+        if not self._gripping_frame:
+            self._gripping_frame = self.frame.copy()
+
         return self._gripping_frame
 
     @gripping_frame.setter
     def gripping_frame(self, frame):
-        self._gripping_frame = Frame(frame[0], frame[1], frame[2])
+        self._gripping_frame = frame.copy() if frame else None
 
-    def __str__(self):
-        """Generate a readable representation of the data of the element."""
-        return str(self.data)
-    
     @property
     def centroid(self):
         return self.mesh.centroid()
@@ -78,11 +150,6 @@ class Element(object):
         -------
         Element
             The constructed element.
-
-        Examples
-        --------
-        >>> data = {frame': Frame.worldXY().data, 'gripping_frame': Frame.worldXY().data}
-        >>> element = Element.from_data(data)
         """
         element = cls(Frame.worldXY())
         element.data = data
@@ -102,71 +169,40 @@ class Element(object):
         >>> element = Element(Frame.worldXY())
         >>> print(element.data)
         """
-        return {'frame'     : self.frame.data,
-                'gripping_frame': self.gripping_frame.data,
-                'mesh'      : self.mesh
-                }
+        d = dict(frame=self.frame.to_data())
+
+        # Only include gripping plane if attribute is really set
+        # (unlike the property getter that defaults to `self.frame`)
+        if self._gripping_frame:
+            d['gripping_frame'] = self.gripping_frame.to_data()
+
+        if self._source:
+            d['_source'] = _serialize_to_data(self._source)
+
+        return d
 
     @data.setter
     def data(self, data):
         self.frame = Frame.from_data(data['frame'])
-        self.gripping_frame = data['gripping_frame']
+        if 'gripping_frame' in data:
+            self.gripping_frame = Frame.from_data(data['gripping_frame'])
+        if '_source' in data:
+            self._source = _deserialize_from_data(data['_source'])
 
     def to_data(self):
         """Returns the data dictionary that represents the element.
+
         Returns
         -------
         dict
             The element data.
+
         Examples
         --------
-        from compas.geomtry import Frame
-        from compas_fab.assembly import Element
-        element = Element(Frame.worldXY())
-        print(element.to_data)
+        >>> from compas.geometry import Frame
+        >>> e1 = Element(Frame.worldXY())
+        >>> e2 = Element.from_data(element.to_data())
+        >>> e2.frame == Frame.worldXY()
+        True
         """
         return self.data
-
-    @classmethod
-    def from_mesh(cls, mesh=None): # classmethod or instance method?
-        """Class method for constructing an element from a COMPAS mesh # or a Rhino mesh
-        Parameters
-        ----------
-        mesh : :class:`compas.geometry.Mesh`
-            The COMPAs mesh.
-        Returns
-        -------
-        Element
-            The element corresponding to the input mesh.
-        """
-
-        centroid = mesh.centroid()
-        frame_centroid = Frame(centroid, [1, 0, 0], [0, 1, 0])
-        return Element(frame_centroid, mesh=mesh)
-    
-
-    def transform(self, transformation):
-        self.frame.transform(transformation)
-        self.gripping_frame.transform(transformation)
-        mesh_transform(self.mesh, transformation)
-        
-    def __repr__(self):
-        return 'Element({}, {})'.format(self.frame, self.gripping_frame)
-
-    def copy(self):
-        """Make a copy of this ``Element``.
-        Returns
-        -------
-        Element
-            The copy.
-        """
-        cls = type(self)
-        return cls(self.frame.copy(), 
-                   mesh=self.mesh.copy(),
-                   gripping_frame=self.gripping_frame.copy())
-
-# ==============================================================================
-# Main
-# ==============================================================================
-if __name__ == "__main__":
-    pass
