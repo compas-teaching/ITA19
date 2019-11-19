@@ -9,20 +9,20 @@ from compas_fab.robots import Configuration
 from compas_fab.robots import CollisionMesh
 from compas_fab.robots import AttachedCollisionMesh
 from compas_fab.robots import PlanningScene
+from compas_fab.robots import Tool
 
 HERE = os.path.dirname(__file__)
 DATA = os.path.abspath(os.path.join(HERE, "..", "data"))
 
-ee_mesh = Mesh.from_stl(os.path.join(DATA, "vacuum_gripper.stl"))
-ee_frame = Frame([0.07, 0, 0], [0, 0, 1], [0, 1, 0])
+tool = Tool.from_json(os.path.join(DATA, "vacuum_gripper.json"))
+
 
 # create attached collision object
-
 w, l, h = 0.06, 0.029, 0.013
 box = Box(Frame.worldXY(), w, l, h)
 T = Translation([-w/2., -l/2, -h])
 box.transform(T)
-T = Transformation.from_frame_to_frame(Frame.worldXY(), ee_frame)
+T = Transformation.from_frame_to_frame(Frame.worldXY(), tool.frame)
 box.transform(T)
 mesh = Mesh.from_shape(box) # the brick in relation to the end-effector frame
 brick_acm = AttachedCollisionMesh(CollisionMesh(mesh, 'brick'), 'ee_link')
@@ -30,11 +30,11 @@ brick_acm = AttachedCollisionMesh(CollisionMesh(mesh, 'brick'), 'ee_link')
 with RosClient('localhost') as client:
     robot = client.load_robot()
     group = robot.main_group_name
-    tool_acm = robot.set_end_effector(ee_mesh, ee_frame)
+    robot.attached_tool(tool)
     scene = PlanningScene(robot)
 
-    scene.add_attached_collision_mesh(tool_acm)
-    scene.add_attached_collision_mesh(brick_acm)
+    scene.add_attached_tool()
+    #scene.add_attached_collision_mesh(brick_acm)
 
     # attention must be specified for the robots ee-link
     frames = []
