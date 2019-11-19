@@ -42,11 +42,9 @@ box_frame = Frame([-w/2., -l/2, 0], [1, 0, 0], [0, 1, 0])
 box = Box(box_frame, w, l, h)
 gripping_frame = Frame([0, 0, h], [1, 0, 0], [0, 1, 0])
 element_frame = Frame([0, 0, h/2], [1, 0, 0], [0, 1, 0])
-element = Element(element_frame,
-                  mesh=Mesh.from_shape(box),
-                  gripping_frame=gripping_frame)
+element = Element.from_mesh(Mesh.from_shape(box), element_frame)
+element.gripping_frame = gripping_frame
 element.transform(Transformation.from_frame_to_frame(element.gripping_frame, target_frame))
-
 
 def acm_from_element(element, tool):
     """Transform the element into the end-effector's frame.
