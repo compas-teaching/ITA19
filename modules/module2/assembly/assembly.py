@@ -1,232 +1,205 @@
-from __future__ import print_function
 from __future__ import absolute_import
 from __future__ import division
+from __future__ import print_function
 
-import ast
 import json
 
 from compas.datastructures import Network
-from .element import Element
+from compas.datastructures._mixins import FromToData
 
+from .element import Element
+from .utilities import _deserialize_from_data
+from .utilities import _serialize_to_data
 
 __all__ = ['Assembly']
 
-#g = gravity
 
-class Assembly(object):
+class Assembly(FromToData):
     """A data structure for discrete element assemblies.
 
     An assembly is essentially a network of assembly elements.
-    Each vertex of the network represents an element of the assembly.
-    Each edge of the network represents an interface between two assembly elements.
-    
+    Each element is represented by a vertex of the network.
+    Each interface or connection between elements is represented by an edge of the network.
+
     Attributes
     ----------
-    blocks : list of :class:`compas_assembly.datastructures.Block`, optional
-        A list of assembly blocks.
+    network : :class:`compas.Network`, optional
+    elements : list of :class:`Element`, optional
+        A list of assembly elements.
     attributes : dict, optional
         User-defined attributes of the assembly.
         Built-in attributes are:
-        * name (str) : 'Assembly'
-    default_vertex_attributes : dict, optional
-        User-defined default attributes of the vertices of the network.
-        Since the vertices of the assembly network represent the individual
-        elements, the built-in attributes are:
-        * is_support (bool) : False
-    default_edge_attributes : dict, optional
-        User-defined default attributes of the edges of the network.
-        Since the edges of the assembly network represent the interfaces between
-        the individual elements, the built-in attributes are:
-        * interface_points (list) : None
-        * interface_type ({'face_face', 'face_edge', 'face_vertex'}) : None
-        * interface_size (float) : None
-        * interface_uvw (list) : None
-        * interface_origin (list) : None
-        * interface_forces (list) : None
+        * name (str) : ``'Assembly'``
+    default_element_attribute : dict, optional
+        User-defined default attributes of the elements of the assembly.
+        The built-in attributes are:
+        * is_planned (bool) : ``False``
+        * is_placed (bool) : ``False``
+    default_connection_attributes : dict, optional
+        User-defined default attributes of the connections of the assembly.
 
     Examples
     --------
     >>> assembly = Assembly()
     >>> for i in range(2):
-    >>>     block = Block.from_polyhedron(6)
-    >>>     assembly.add_block(block)
-    >>> print(assembly.summary())
+    >>>     element = Element.from_box(Box(Frame.worldXY(), 10, 5, 2))
+    >>>     assembly.add_element(element)
     """
-
-    __module__ = 'compas_assembly.datastructures'
 
     def __init__(self,
                  elements=None,
                  attributes=None,
-                 default_vertex_attributes=None,
-                 default_edge_attributes=None):
+                 default_element_attribute=None,
+                 default_connection_attributes=None):
         
-        self.network = Network()
         self.elements = {}
-
+        self.network = Network()
         self.network.attributes.update({'name': 'Assembly'})
+
         if attributes is not None:
             self.network.attributes.update(attributes)
 
         self.network.default_vertex_attributes.update({
-            'is_support': False,
-            'is_placed': False,
-            'course': None,
+            'is_planned': False,
+            'is_placed': False
         })
 
-        if default_vertex_attributes is not None:
-            self.network.default_vertex_attributes.update(default_vertex_attributes)
+        if default_element_attribute is not None:
+            self.network.default_vertex_attributes.update(default_element_attribute)
 
-        self.network.default_edge_attributes.update({
-            'interface_points': None,
-            'interface_type': None,
-            'niterface_size': None,
-            'interface_uvw': None,
-            'interface_origin': None,
-            'interface_forces': None,
-        })
-
-        if default_edge_attributes is not None:
-            self.network.default_edge_attributes.update(default_edge_attributes)
+        if default_connection_attributes is not None:
+            self.network.default_edge_attributes.update(default_connection_attributes)
 
         if elements:
             for element in elements:
                 self.add_element(element)
 
-    @classmethod
-    def from_json(cls, filepath):
-        """Construct an assembly from the data contained in a JSON file.
+    @property
+    def name(self):
+        """str : The name of the assembly."""
+        return self.network.attributes.get('name', None)
 
-        Parameters
-        ----------
-        filepath : str
-            Path to the file containing the data.
-        
-        Returns
-        -------
-        Assembly
-            An assembly data structure.
-        
-        Examples
-        --------
-        >>> assembly = Assembly.from_json('assembly.json')
-        """
+    @name.setter
+    def name(self, value):
+        self.network.attributes['name'] = value
 
-        with open(filepath, 'r') as fo:
-            data = json.load(fo)
-
-            # vertex keys in an assembly can be of any hashable type
-            # keys in the blocks dict should be treated the same way!
-
-            assembly = cls.from_data(data['assembly'])
-            assembly.elements = {int(key): Element.from_data(data['blocks'][key]) for key in data['blocks']}
-
-        return assembly
-
-    def to_json(self, filepath):
-        """Serialise the data dictionary representing an assembly to JSON and store in a file.
-
-        Parameters
-        ----------
-        filepath : str
-            Path to the file.
-        
-        Examples
-        --------
-        >>> assembly = Assembly.from_json('assembly.json')
-        >>> # do stuff
-        >>> assembly.to_json('assembly.json')
-        """
-        data = {
-            'assembly': self.to_data(),
-            'blocks': {str(key): self.elements[key].to_data() for key in self.elements}
-        }
-        with open(filepath, 'w') as fo:
-            json.dump(data, fo, indent=4, sort_keys=True)
-
-    def copy(self):
-        """Make an independent copy of an assembly.
-
-        Examples
-        --------
-        >>> copy_of_assembly = assembly.copy()
-        """
-        assembly = super(Assembly, self).copy()
-        assembly.elements = {key: self.blocks[key].copy() for key in self.vertices()}
-        return assembly
+    def clear(self):
+        """Clear all the assembly data."""
+        self.network.clear()
+        self.elements = {}
 
     def add_element(self, element, key=None, attr_dict={}, **kwattr):
         """Add an element to the assembly.
 
         Parameters
         ----------
-        block : compas_assembly.datastructures.Block
-            The block to add.
+        element : Element
+            The element to add.
         attr_dict : dict, optional
-            A dictionary of block attributes. Default is ``None``.
+            A dictionary of element attributes. Default is ``None``.
 
         Returns
         -------
         hashable
-            The identifier of the block.
-
-        Notes
-        -----
-        The block is added as a vertex in the assembly data structure.
-        The XYZ coordinates of the vertex are the coordinates of the centroid of the block.
+            The identifier of the element.
         """
         attr_dict.update(kwattr)
-        x, y, z = element.centroid
-        key = self.network.add_vertex(key=key, attr_dict=attr_dict, x=x, y=y, z=z)
-        self.elements[key] = element
+        x, y, z = element.frame.point
+        key = self.network.add_vertex(key=key, attr_dict=attr_dict,
+            x=x, y=y, z=z, element=element)
         return key
 
-    def number_of_interface_vertices(self):
-        """Compute the total number of interface vertices.
+    def number_of_elements(self):
+        """Compute the number of elements of the assembly.
 
         Returns
         -------
         int
-            The number of vertices.
+            The number of elements.
+
         """
-        return sum(len(attr['interface_points']) for u, v, attr in self.edges(True))
+        return len(self.elements)
 
-    def subset(self, keys):
-        """Create an assembly that is a subset of the current assembly.
-
-        Parameters
-        ----------
-        keys : list
-            Identifiers of the blocks that should be included in the subset.
+    def number_of_connections(self):
+        """Compute the number of connections of the assembly.
 
         Returns
         -------
-        :class: `Assembly`
-            The sub-assembly.
+        int
+            the number of connections.
 
-        Examples
-        --------
-        >>> assembly = Assembly.from_json('assembly.json')
-        >>> sub = assembly.subset([0, 1, 2, 3])
         """
-        cls = type(self)
-        sub = cls()
-        for key, attr in self.network.vertices(True):
-            if key in keys:
-                block = self.elements[key].copy()
-                sub.network.add_vertex(key=key, **attr)
-                sub.network.elements[key] = block
-        for u, v, attr in self.network.edges(True):
-            if u in keys and v in keys:
-                sub.network.add_edge(u, v, **attr)
-        return sub
+        return self.network.number_of_edges()
 
+    @property
+    def data(self):
+        """Return a data dictionary of the assembly.
+        """
+        # Network data does not recursively serialize to data...
+        d = self.network.data
 
+        # so we need to trigger that for elements stored in vertices
+        vertex = {}
+        for vkey, vdata in d['vertex'].items():
+            vertex[vkey] = {key: vdata[key] for key in vdata.keys() if key != 'element'}
+            vertex[vkey]['element'] = vdata['element'].to_data()
 
-# ==============================================================================
-# Main
-# ==============================================================================
+        d['vertex'] = vertex
 
-if __name__ == "__main__":
+        return d
 
-    pass
+    @data.setter
+    def data(self, data):
+        # Deserialize elements from vertex dictionary
+        for _vkey, vdata in data['vertex'].items():
+            vdata['element'] = Element.from_data(vdata['element'])
+
+        self.network = Network.from_data(data)
+
+    def clear(self):
+        """Clear all the assembly data."""
+        self.network.clear()
+        self.elements = {}
+
+    def add_element(self, element, key=None, attr_dict={}, **kwattr):
+        """Add an element to the assembly.
+
+        Parameters
+        ----------
+        element : Element
+            The element to add.
+        attr_dict : dict, optional
+            A dictionary of element attributes. Default is ``None``.
+
+        Returns
+        -------
+        hashable
+            The identifier of the element.
+        """
+        attr_dict.update(kwattr)
+        x, y, z = element.frame.point
+        key = self.network.add_vertex(key=key, attr_dict=attr_dict,
+                                      x=x, y=y, z=z, element=element)
+        return key
+
+    def add_connection(self, u, v, attr_dict=None, **kwattr):
+        """Add a connection between two elements and specify its attributes.
+
+        Parameters
+        ----------
+        u : hashable
+            The identifier of the first element of the connection.
+        v : hashable
+            The identifier of the second element of the connection.
+        attr_dict : dict, optional
+            A dictionary of connection attributes.
+        kwattr
+            Other connection attributes as additional keyword arguments.
+
+        Returns
+        -------
+        tuple
+            The identifiers of the elements.
+        """
+        return self.network.add_edge(u, v, attr_dict, **kwattr)
+
