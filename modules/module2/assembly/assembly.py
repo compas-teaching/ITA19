@@ -155,6 +155,7 @@ class Assembly(FromToData, FromToJson):
         x, y, z = element.frame.point
         key = self.network.add_vertex(key=key, attr_dict=attr_dict,
                                       x=x, y=y, z=z, element=element)
+        self.elements.update({key : element})
         return key
 
     def add_connection(self, u, v, attr_dict=None, **kwattr):
@@ -177,4 +178,40 @@ class Assembly(FromToData, FromToJson):
             The identifiers of the elements.
         """
         return self.network.add_edge(u, v, attr_dict, **kwattr)
+
+    def transform(self, transformation):
+        """Transforms this assembly.
+
+        Parameters
+        ----------
+        transformation : :class:`Transformation`
+
+        Returns
+        -------
+        None
+        """
+        for k, elem in self.elements.items():
+            elem.transform(transformation)
+    
+    def transformed(self, transformation):
+        """Returns a transformed copy of this assembly.
+
+        Parameters
+        ----------
+        transformation : :class:`Transformation`
+
+        Returns
+        -------
+        Assembly
+        """
+        assembly = self.copy()
+        assembly.transform(transformation)
+        return assembly
+    
+    def copy(self):
+        """Returns a copy of this assembly.
+        """
+        raise NotImplementedError
+
+    
 
