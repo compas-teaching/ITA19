@@ -5,6 +5,7 @@ from __future__ import print_function
 import json
 
 from compas.datastructures import Mesh
+from compas.datastructures import mesh_transform
 from compas.geometry import Frame
 
 from .utilities import _deserialize_from_data
@@ -39,7 +40,7 @@ class Element(object):
     @classmethod
     def from_mesh(cls, mesh, frame):
         """Construct an element from a mesh.
-        
+
         Parameters
         ----------
         mesh : :class:`Mesh`
@@ -79,12 +80,12 @@ class Element(object):
     @classmethod
     def from_box(cls, box):
         """Construct an element from a box primitive.
-        
+
         Parameters
         ----------
         box : :class:`compas.geometry.Box`
             Box primitive describing the element.
-        
+
         Returns
         -------
         :class:`Element`
@@ -206,3 +207,30 @@ class Element(object):
         True
         """
         return self.data
+
+    def transform(self, transformation):
+        """Transforms the element.
+
+        Parameters
+        ----------
+        transformation : :class:`Transformation`
+
+        Returns
+        -------
+        None
+
+        Examples
+        --------
+        >>> from compas.geometry import Box
+        >>> from compas.geometry import Translation
+        >>> element = Element.from_box(Box(Frame.worldXY(), 1, 1, 1))
+        >>> element.transform(Translation([1, 0, 0]))
+        """
+        self.frame.transform(transformation)
+        if self._gripping_frame:
+            self.gripping_frame.transform(transformation)
+        if self._source:
+            if type(self._source) == Mesh:
+                mesh_transform(self._source, transformation)  # it would be really good to have Mesh.transform()
+            else:
+                self._source.transform(transformation)
