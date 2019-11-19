@@ -6,6 +6,7 @@ import json
 
 from compas.datastructures import Network
 from compas.datastructures._mixins import FromToData
+from compas.datastructures._mixins import FromToJson
 
 from .element import Element
 from .utilities import _deserialize_from_data
@@ -14,7 +15,7 @@ from .utilities import _serialize_to_data
 __all__ = ['Assembly']
 
 
-class Assembly(FromToData):
+class Assembly(FromToData, FromToJson):
     """A data structure for discrete element assemblies.
 
     An assembly is essentially a network of assembly elements.
@@ -82,32 +83,6 @@ class Assembly(FromToData):
     @name.setter
     def name(self, value):
         self.network.attributes['name'] = value
-
-    def clear(self):
-        """Clear all the assembly data."""
-        self.network.clear()
-        self.elements = {}
-
-    def add_element(self, element, key=None, attr_dict={}, **kwattr):
-        """Add an element to the assembly.
-
-        Parameters
-        ----------
-        element : Element
-            The element to add.
-        attr_dict : dict, optional
-            A dictionary of element attributes. Default is ``None``.
-
-        Returns
-        -------
-        hashable
-            The identifier of the element.
-        """
-        attr_dict.update(kwattr)
-        x, y, z = element.frame.point
-        key = self.network.add_vertex(key=key, attr_dict=attr_dict,
-            x=x, y=y, z=z, element=element)
-        return key
 
     def number_of_elements(self):
         """Compute the number of elements of the assembly.
