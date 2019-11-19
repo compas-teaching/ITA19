@@ -1,82 +1,105 @@
 import os
 import sys
+import math
 from compas.geometry import Vector
 from compas.geometry import Frame
+from compas.geometry import Box
+from compas.geometry import Transformation
 from compas.datastructures import Mesh
 from compas_fab.backends import RosClient
 from compas_fab.robots import PlanningScene
 from compas_fab.robots import Configuration
-
-from assembly import Assembly
+from compas_fab.robots import Tool
+from compas.datastructures import mesh_transformed
+from compas_fab.robots import AttachedCollisionMesh
+from compas_fab.robots import CollisionMesh
 
 HERE = os.path.dirname(__file__)
 DATA = os.path.abspath(os.path.join(HERE, "..", "data"))
 ASSEMBLY_PATH = os.path.abspath(os.path.join(HERE, ".."))
 sys.path.append(ASSEMBLY_PATH)
 
+from assembly import Element
+
 # define end-effector mesh and frame
-ee_mesh = Mesh.from_stl(os.path.join(DATA, "vacuum_gripper.stl"))
-ee_frame = Frame([0.07, 0, 0], [0, 0, 1], [0, 1, 0])
+tool = Tool.from_json(os.path.join(DATA, "vacuum_gripper.json"))
+
+# create Element
+w, l, h = 0.06, 0.03, 0.014
+box_frame = Frame([-w/2., -l/2, 0], [1, 0, 0], [0, 1, 0])
+box = Box(box_frame, w, l, h)
+gripping_frame = Frame([0, 0, h], [1, 0, 0], [0, 1, 0])
+element_frame = Frame([0, 0, h/2], [1, 0, 0], [0, 1, 0])
+element = Element(element_frame, 
+                  mesh=Mesh.from_shape(box),
+                  gripping_frame=gripping_frame)
+
+def acm_from_element(element, tool):
+    """Transform the element into the end-effector's frame.
+    """
+    T = Transformation.from_frame_to_frame(element.gripping_frame, tool.frame)
+    mesh = mesh_transformed(element.mesh, T)
+    return AttachedCollisionMesh(CollisionMesh(mesh, 'brick'), 'ee_link')
+
+brick_acm = acm_from_element(element, tool)
+
+start_configuration = Configuration.from_revolute_values([-5.961, 4.407, -2.265, 5.712, 1.571, -2.820])
 
 # define picking frame and configuration
-picking_frame = Frame([-0.43, 0, 0], [1, 0, 0], [0, 1, 0])
-picking_configuration = Configuration.from_revolute_values([-5.961, 4.407, -2.265, 5.712, 1.571, -2.820])
+picking_frame = Frame([-0.43, 0, h], [1, 0, 0], [0, 1, 0])
+picking_configuration = None
 
-save_vector = Vector(0, 0, 0.05)
-picking_frame_savelevel = picking_frame.copy()
-picking_frame_savelevel.point += save_vector
+# define target frame
+target_frame = Frame([-0.26, -0.28, h], [1, 0, 0], [0, 1, 0])
 
+# define savelevel frames 'above' the picking- and target frames
+savelevel_vector = Vector(0, 0, 0.05)
+savelevel_picking_frame = picking_frame.copy()
+savelevel_picking_frame.point += savelevel_vector
+savelevel_target_frame = target_frame.copy()
+savelevel_target_frame.point += savelevel_vector
 
-# load assembly
-assembly = Assembly.from_json(PATH_FROM)
+# settings for plan_motion
+tolerance_position = 0.001
+tolerance_axes = [math.radians(1)] * 3
 
 with RosClient('localhost') as client:
     robot = client.load_robot()
     scene = PlanningScene(robot)
-    tool_acm = robot.set_end_effector(ee_mesh, ee_frame)
+    robot.attach_tool(tool)
+    scene.add_attached_tool()
+
+    picking_configuration = robot.inverse_kinematics(robot.to_tool0_frame(picking_frame), start_configuration)
+
+    # 1. 'Pick' the object at the picking picking frame with a cartesian path 
+    # start_frame and start_configuration are picking_frame and picking_configuration
+    frames = [picking_frame, savelevel_picking_frame]
+    frames_tool0 = robot.to_tool0_frames(frames)
+
+    trajectory1 = robot.plan_cartesian_motion(frames_tool0,
+                                              picking_configuration,
+                                              max_step=0.01,
+                                              attached_collision_meshes=[brick_acm])
+    assert(trajectory1.fraction == 1.)
+
+    # 2. Now calulate a free-space motion to the savelevel_target_frame
+    
+
+    # create goal constraints from frame
+    goal_constraints = robot.constraints_from_frame(robot.to_tool0_frame(savelevel_target_frame),
+                                                    tolerance_position,
+                                                    tolerance_axes,
+                                                    group)
+
+    trajectory = robot.plan_motion(goal_constraints,
+                                   start_configuration,
+                                   group,
+                                   planner_id='RRT')
+
+    # scene.add_attached_collision_mesh(brick_acm)
 
 
 
 
-
-    # Iterate over the keys in the assembly
-    for key in sequence:
-
-        start_configuration = picking_configuration
-
-        # Read the placing frame from brick, zaxis down
-        o, uvw = assembly_block_placing_frame(assembly, key)
-        placing_frame = Frame(o, uvw[1], uvw[0])
-
-        # Calculate saveframe at placing frame
-        saveframe_place = Frame(placing_frame.point + save_vector, placing_frame.xaxis, placing_frame.yaxis)
-
-        # Check ik for placing_frame and saveframe_place
-        # Only if both work, save to assembly
-        try:
-            response = robot.inverse_kinematics(frame_WCF=saveframe_place,
-                                                start_configuration=start_configuration,
-                                                group=group,
-                                                constraints=None,
-                                                attempts=20)
-            start_configuration = response.configuration
-            try:
-                response = robot.inverse_kinematics(frame_WCF=placing_frame,
-                                                    start_configuration=start_configuration,
-                                                    group=group,
-                                                    constraints=None,
-                                                    attempts=20)
-                start_configuration = response.configuration
-                print("Brick with key %d is buildable" % key)
-                # Update attribute
-                assembly.set_vertex_attribute(key, 'is_buildable', True)
-
-            except RosError as error:
-                print("Brick with key %d is NOT buildable" % key, error)
-        except RosError as error:
-            print("Brick with key %d is NOT buildable" % key, error)
-
-assembly.to_json(PATH_TO)
-
-robot.client.close()
-robot.client.terminate()
+    """
+    """
