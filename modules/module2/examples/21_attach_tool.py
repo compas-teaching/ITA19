@@ -1,6 +1,5 @@
 import os
 from compas.geometry import Frame
-from compas.datastructures import Mesh
 from compas_fab.backends import RosClient
 from compas_fab.robots import PlanningScene
 from compas_fab.robots import Tool
@@ -8,14 +7,8 @@ from compas_fab.robots import Tool
 HERE = os.path.dirname(__file__)
 DATA = os.path.abspath(os.path.join(HERE, "..", "data"))
 
-# load local mesh
-ee_mesh = Mesh.from_stl(os.path.join(DATA, "vacuum_gripper.stl"))
-
-# define end-effector frame
-ee_frame = Frame([0.07, 0, 0], [0, 0, 1], [0, 1, 0])
-
-tool = Tool(ee_mesh, ee_frame)
-tool.to_json(os.path.join(DATA, "vacuum_gripper.json"))
+filepath = os.path.join(DATA, "vacuum_gripper.json")
+tool = Tool.from_json(filepath)
 
 with RosClient('localhost') as client:
     robot = client.load_robot()
