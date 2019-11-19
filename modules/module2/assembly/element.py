@@ -234,3 +234,17 @@ class Element(object):
                 mesh_transform(self._source, transformation)  # it would be really good to have Mesh.transform()
             else:
                 self._source.transform(transformation)
+
+    def copy(self):
+        """Returns a copy of this element.
+
+        Returns
+        -------
+        Element
+        """
+        elem = Element(self.frame.copy())
+        if self._gripping_frame:
+            elem.gripping_frame = self.gripping_frame.copy()
+        if self._source:
+            elem._source = self._source.copy()
+        return elem
