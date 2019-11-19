@@ -234,6 +234,28 @@ class Element(object):
                 mesh_transform(self._source, transformation)  # it would be really good to have Mesh.transform()
             else:
                 self._source.transform(transformation)
+    
+    def transformed(self, transformation):
+        """Returns a transformed copy of this element.
+
+        Parameters
+        ----------
+        transformation : :class:`Transformation`
+
+        Returns
+        -------
+        Element
+
+        Examples
+        --------
+        >>> from compas.geometry import Box
+        >>> from compas.geometry import Translation
+        >>> element = Element.from_box(Box(Frame.worldXY(), 1, 1, 1))
+        >>> element2 = element.transformed(Translation([1, 0, 0]))
+        """
+        elem = self.copy()
+        elem.transform(transformation)
+        return elem
 
     def copy(self):
         """Returns a copy of this element.
