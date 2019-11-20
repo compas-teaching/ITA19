@@ -29,6 +29,8 @@ Some examples use Jupyter Notebooks, which needs to be installed **in the same e
 * **Slides**: [part 1](https://docs.google.com/presentation/d/1OIU3vCmwe3lkVWpI0JuJJ-GFoOq5HH8ulElPZNS_F2Y/edit?usp=sharing)
 * **Assignments**: [part 1](assignments/README.md)
 
+---
+
 * [Docker configuration to launch ROS & MoveIt](docker-ur5/)
 * [Open MoveIt! in your browser](http://localhost:8080/vnc.html?resize=scale&autoconnect=true) (once the UR5 docker compose has been started)
 * Basic examples:
@@ -61,6 +63,8 @@ Some examples use Jupyter Notebooks, which needs to be installed **in the same e
 * **Jupyter Notebooks**:
   * [Path planning](Path planning.ipynb)
   * [Robotic Assembly](modules\module2\Robotic Assembly.ipynb)
+
+---
 
 * [Docker configuration to launch ROS & MoveIt](docker-ur5/)
 * [Assembly Playground](examples/20_robot_assembly.ghx)
