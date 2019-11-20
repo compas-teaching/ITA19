@@ -61,8 +61,8 @@ Some examples use Jupyter Notebooks, which needs to be installed **in the same e
 * **Slides**:  [part 2](https://docs.google.com/presentation/d/1S29aMP9h4nRvQCdr1jGvp0L4YQCc8q0_irpHb9p9kos/edit?usp=sharing)
 * **Assignments**: [part 2](assignments/README.md#module-21-1)
 * **Jupyter Notebooks**:
-  * [Path planning](Path planning.ipynb)
-  * [Robotic Assembly](modules\module2\Robotic Assembly.ipynb)
+  * [Path planning](Path%20planning.ipynb)
+  * [Robotic Assembly](Robotic%20Assembly.ipynb)
 
 ---
 
