@@ -53,7 +53,6 @@ class Assembly(FromToData, FromToJson):
                  default_element_attribute=None,
                  default_connection_attributes=None):
         
-        self.elements = {}
         self.network = Network()
         self.network.attributes.update({'name': 'Assembly'})
 
@@ -93,7 +92,7 @@ class Assembly(FromToData, FromToJson):
             The number of elements.
 
         """
-        return len(self.elements)
+        return self.network.number_of_vertices()
 
     def number_of_connections(self):
         """Compute the number of connections of the assembly.
@@ -134,7 +133,6 @@ class Assembly(FromToData, FromToJson):
     def clear(self):
         """Clear all the assembly data."""
         self.network.clear()
-        self.elements = {}
 
     def add_element(self, element, key=None, attr_dict={}, **kwattr):
         """Add an element to the assembly.
@@ -155,7 +153,6 @@ class Assembly(FromToData, FromToJson):
         x, y, z = element.frame.point
         key = self.network.add_vertex(key=key, attr_dict=attr_dict,
                                       x=x, y=y, z=z, element=element)
-        self.elements.update({key : element})
         return key
 
     def add_connection(self, u, v, attr_dict=None, **kwattr):
@@ -190,8 +187,8 @@ class Assembly(FromToData, FromToJson):
         -------
         None
         """
-        for k, elem in self.elements.items():
-            elem.transform(transformation)
+        for _k, element in self.elements(data=False):
+            element.transform(transformation)
     
     def transformed(self, transformation):
         """Returns a transformed copy of this assembly.
@@ -213,5 +210,44 @@ class Assembly(FromToData, FromToJson):
         """
         raise NotImplementedError
 
+    def elements(self, data=False):
+        """Iterate over the elements of the assembly.
     
+        Parameters
+        ----------
+        data : bool, optional
+            If ``True``, yield both the identifier and the attributes.
+
+        Yields
+        ------
+        2-tuple
+            The next element as a (key, element) tuple, if ``data`` is ``False``.
+        3-tuple
+            The next element as a (key, element, attr) tuple, if ``data`` is ``True``.
+
+        """
+        if data:
+            for vkey, vattr in self.network.vertices(True):
+                yield vkey, vattr['element'], vattr
+        else:
+            for vkey in self.network.vertices(data):
+                yield vkey, self.network.vertex[vkey]['element']
+
+    def connections(self, data=False):
+        """Iterate over the connections of the network.
+
+        Parameters
+        ----------
+        data : bool, optional
+            If ``True``, yield both the identifier and the attributes.
+
+        Yields
+        ------
+        2-tuple
+            The next connection identifier (u, v), if ``data`` is ``False``.
+        3-tuple
+            The next connection as a (u, v, attr) tuple, if ``data`` is ``True``.
+
+        """
+        return self.network.edges(data)
 
