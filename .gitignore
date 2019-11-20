@@ -105,8 +105,6 @@ venv.bak/
 
 # mac stuff
 .DS_Store
-*.json
-*.json
 
 __temp
 *.rhl
