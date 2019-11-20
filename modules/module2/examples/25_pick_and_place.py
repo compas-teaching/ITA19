@@ -27,8 +27,12 @@ tool = Tool.from_json(filepath)
 # define brick dimensions
 width, length, height = 0.06, 0.03, 0.014
 
+# little tolerance to not 'crash' into collision objects
+tolerance_vector = Vector(0, 0, 0.001)
+
 # define target frame
 target_frame = Frame([-0.26, -0.28, height], [1, 0, 0], [0, 1, 0])
+target_frame.point += tolerance_vector
 
 # create Element and move it to target frame
 box_frame = Frame([-width/2., -length/2, 0], [1, 0, 0], [0, 1, 0])
@@ -45,16 +49,9 @@ element_tool0.transform(T)
 # define start_configuration (close to picking_frame)
 start_configuration = Configuration.from_revolute_values([-5.961, 4.407, -2.265, 5.712, 1.571, -2.820])
 
-# little tolerance to not 'crash' into collision objects
-tolerance_vector = Vector(0, 0, 0.001)
-
 # define picking frame
 picking_frame = Frame([-0.43, 0, height], [1, 0, 0], [0, 1, 0])
 picking_frame.point += tolerance_vector
-
-# define target frame
-target_frame = Frame([-0.26, -0.28, height], [1, 0, 0], [0, 1, 0])
-target_frame.point += tolerance_vector
 
 # define savelevel frames 'above' the picking- and target frames
 savelevel_vector = Vector(0, 0, 0.05)
