@@ -11,14 +11,10 @@ from compas.geometry import Frame
 HERE = os.path.dirname(__file__)
 DATA = os.path.abspath(os.path.join(HERE, "..", "data"))
 
-# load local mesh
-ee_mesh = Mesh.from_stl(os.path.join(DATA, "vacuum_gripper.stl"))
-
-# define end-effector frame
-ee_frame = Frame([0.07, 0, 0], [0, 0, 1], [0, 1, 0])
-
-tool = Tool(ee_mesh, ee_frame)
-tool.to_json(os.path.join(DATA, "vacuum_gripper.json"))
+# create tool from mesh and frame
+mesh = Mesh.from_stl(os.path.join(DATA, "vacuum_gripper.stl"))
+frame = Frame([0.07, 0, 0], [0, 0, 1], [0, 1, 0])
+tool = Tool(mesh, frame)
 
 with RosClient('localhost') as client:
     robot = client.load_robot()
@@ -29,8 +25,8 @@ with RosClient('localhost') as client:
     scene.add_attached_tool()
 
     # now we can convert frames at robot's tool tip and flange
-    frame_tcf = Frame((-0.309, -0.046, -0.266), (0.276, 0.926, -0.256), (0.879, -0.136, 0.456))
-    frame_tcf0 = robot.from_attached_tool_to_tool0([frame_tcf])
+    frames_tcf = [Frame((-0.309, -0.046, -0.266), (0.276, 0.926, -0.256), (0.879, -0.136, 0.456))]
+    frames_tcf0 = robot.from_attached_tool_to_tool0(frames_tcf)
 
     time.sleep(2)
 
