@@ -12,7 +12,7 @@ filepath = os.path.join(DATA, "vacuum_gripper.json")
 tool = Tool.from_json(filepath)
 
 element_height = 0.014
-savelevel_height = 0.05
+safelevel_height = 0.05
 
 with RosClient('localhost') as client:
     robot = client.load_robot()
@@ -25,7 +25,7 @@ with RosClient('localhost') as client:
 
     # 3. Define frames
     picking_frame = Frame([-0.43, 0, element_height], [1, 0, 0], [0, 1, 0])
-    savelevel_picking_frame = Frame([-0.43, 0, element_height + savelevel_height], [1, 0, 0], [0, 1, 0])
+    savelevel_picking_frame = Frame([-0.43, 0, element_height + safelevel_height], [1, 0, 0], [0, 1, 0])
     frames = [picking_frame, savelevel_picking_frame]
 
     # 4. Convert frames to tool0_frames

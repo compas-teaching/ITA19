@@ -36,4 +36,8 @@ with RosClient('localhost') as client:
     brick = CollisionMesh(element.mesh, 'brick_wall')
     scene.append_collision_mesh(brick)
 
+    time.sleep(2)
+
+    # Remove elements from scene
+    scene.remove_collision_mesh(brick.id)
     time.sleep(1)

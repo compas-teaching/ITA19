@@ -54,4 +54,14 @@ with RosClient('localhost') as client:
     # add the collision mesh to the scene
     scene.add_attached_collision_mesh(brick_acm)
 
+    time.sleep(2)
+
+    # Remove tool and brick
+    scene.remove_attached_collision_mesh(brick_acm.collision_mesh.id)
+    scene.remove_collision_mesh(brick_acm.collision_mesh.id)
+
+    scene.remove_attached_tool()
+    scene.remove_collision_mesh(tool.name)
+    robot.detach_tool()
+
     time.sleep(1)
