@@ -1,4 +1,5 @@
 import os
+import json
 import sys
 import time
 from compas.geometry import Frame
@@ -14,24 +15,25 @@ HERE = os.path.dirname(__file__)
 DATA = os.path.abspath(os.path.join(HERE, "..", "data"))
 ASSEMBLY_PATH = os.path.abspath(os.path.join(HERE, ".."))
 sys.path.append(ASSEMBLY_PATH)
-
 from assembly import Element
+
+# load settings (shared by GH)
+settings_file = os.path.join(DATA, "settings.json")
+with open(settings_file, 'r') as f:
+    data = json.load(f)
 
 # create tool from json
 filepath = os.path.join(DATA, "vacuum_gripper.json")
 tool = Tool.from_json(filepath)
 
 # define brick dimensions
-width, length, height = 0.06, 0.03, 0.014
+width, length, height = data['brick_dimensions']
 
 # define target frame
 target_frame = Frame([-0.26, -0.28, height], [1, 0, 0], [0, 1, 0])
 
 # create Element and move it to target frame
-box_frame = Frame([-width/2., -length/2, 0], [1, 0, 0], [0, 1, 0])
-box = Box(box_frame, width, length, height)
-gripping_frame = Frame([0, 0, height], [1, 0, 0], [0, 1, 0])
-element = Element.from_shape(box, gripping_frame)
+element = Element.from_data(data['brick'])
 element.transform(Transformation.from_frame_to_frame(element.frame, target_frame))
 
 # now we need to bring the element's mesh into the robot's tool0 frame

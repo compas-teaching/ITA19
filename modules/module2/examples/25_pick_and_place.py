@@ -2,6 +2,7 @@ import os
 import sys
 import math
 import time
+import json
 from compas.geometry import Vector
 from compas.geometry import Frame
 from compas.geometry import Box
@@ -15,46 +16,55 @@ from compas_fab.robots import CollisionMesh
 
 HERE = os.path.dirname(__file__)
 DATA = os.path.abspath(os.path.join(HERE, "..", "data"))
+PATH_TO = os.path.join(DATA, os.path.basename(__file__) + ".json")
+print(PATH_TO)
+
 ASSEMBLY_PATH = os.path.abspath(os.path.join(HERE, ".."))
 sys.path.append(ASSEMBLY_PATH)
 
-from assembly import Element
+from assembly import Element, Assembly
+
+# load settings (shared by GH)
+settings_file = os.path.join(DATA, "settings.json")
+with open(settings_file, 'r') as f:
+    data = json.load(f)
 
 # create tool from json
 filepath = os.path.join(DATA, "vacuum_gripper.json")
 tool = Tool.from_json(filepath)
 
 # define brick dimensions
-width, length, height = 0.06, 0.03, 0.014
+width, length, height = data['brick_dimensions']
 
 # little tolerance to not 'crash' into collision objects
-tolerance_vector = Vector(0, 0, 0.001)
+tolerance_vector = Vector.from_data(data['tolerance_vector'])
 
 # define target frame
 target_frame = Frame([-0.26, -0.28, height], [1, 0, 0], [0, 1, 0])
 target_frame.point += tolerance_vector
 
 # create Element and move it to target frame
-box_frame = Frame([-width/2., -length/2, 0], [1, 0, 0], [0, 1, 0])
-box = Box(box_frame, width, length, height)
-gripping_frame = Frame([0, 0, height], [1, 0, 0], [0, 1, 0])
-element = Element.from_shape(box, gripping_frame)
-element.transform(Transformation.from_frame_to_frame(element.frame, target_frame))
+element = Element.from_data(data['brick'])
+
+# create Assembly with element at target_frame
+assembly = Assembly()
+T = Transformation.from_frame_to_frame(element.frame, target_frame)
+assembly.add_element(element.transformed(T))
 
 # Bring the element's mesh into the robot's tool0 frame
 element_tool0 = element.copy()
 T = Transformation.from_frame_to_frame(element_tool0.gripping_frame, tool.frame)
 element_tool0.transform(T)
 
-# define start_configuration (close to picking_frame)
-start_configuration = Configuration.from_revolute_values([-5.961, 4.407, -2.265, 5.712, 1.571, -2.820])
+# define picking_configuration
+picking_configuration = Configuration.from_data(data['picking_configuration'])
 
 # define picking frame
-picking_frame = Frame([-0.43, 0, height], [1, 0, 0], [0, 1, 0])
+picking_frame = Frame.from_data(data['picking_frame'])
 picking_frame.point += tolerance_vector
 
 # define savelevel frames 'above' the picking- and target frames
-savelevel_vector = Vector(0, 0, 0.05)
+savelevel_vector = Vector.from_data(data['savelevel_vector'])
 savelevel_picking_frame = picking_frame.copy()
 savelevel_picking_frame.point += savelevel_vector
 savelevel_target_frame = target_frame.copy()
@@ -82,8 +92,6 @@ with RosClient('localhost') as client:
     scene.add_attached_collision_mesh(brick_acm)
 
     # ==========================================================================
-    picking_frame_tool0 = robot.from_attached_tool_to_tool0([picking_frame])[0]
-    picking_configuration = robot.inverse_kinematics(picking_frame_tool0, start_configuration)
 
     # 1. Calculate a cartesian motion from the picking frame to the savelevel_picking_frame
     frames = [picking_frame, savelevel_picking_frame]
