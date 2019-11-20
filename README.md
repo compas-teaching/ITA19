@@ -36,7 +36,7 @@ Week | Date | Lead | Title | Description | Links
 4 | Oct 30 | BRG | Module 1: Structural Design | **Theory:** Form Finding methods | [Slides](slides/week-4_Structural-Design.pdf), [Assignment](modules/module1/assignments/README.md)
 5 | Nov 6 | BRG | Module 1: Structural Design | **Case study:** The HiLo cablenet formwork system | [Slides](slides/week-5_Structural-Design.pdf)
 6 | Nov 13 | GKR | Module 2: Robotic Assembly | **Theory:** Robotic fabrication planning and executing | [Slides](https://docs.google.com/presentation/d/1OIU3vCmwe3lkVWpI0JuJJ-GFoOq5HH8ulElPZNS_F2Y/edit?usp=sharing), [Jupyter Notebook](modules/module2/Frame%20and%20Transformation.ipynb), [Assignment](modules/module2/assignments/README.md)
-7 | Nov 20 | GKR | Module 2: Robotic Assembly | **Case study:** Robotic assembly of a brick wall
+7 | Nov 20 | GKR | Module 2: Robotic Assembly | **Case study:** Robotic assembly of a brick wall | [Slides](https://docs.google.com/presentation/d/1S29aMP9h4nRvQCdr1jGvp0L4YQCc8q0_irpHb9p9kos/edit?usp=sharing), [Assignment](modules/module2/assignments/README.md)
 8 | Nov 27 | DBT | Module 3: Volumetric Modeling | **Theory:** Modelling with signed distance functions
 9 | Dec 4 | DBT | Module 3: Volumetric Modeling | **Case study:** Modelling of a node
 10 | Dec 11 | BRG | Next Steps | Using COMPAS in your own work

@@ -7,24 +7,26 @@ The next two weeks of the COMPAS ITA course are focused on robotic assembly usin
 We will use the `ita19` environment and update it as follows:
 
     (base)  conda activate ita19
-    (ita19) conda install compas=0.11 compas_fab=0.9 --yes
+    (ita19) conda update compas compas_fab --yes
     (ita19) python -m compas_fab.rhino.install -v 6.0
-
-Some examples will also use Jupyter Notebooks, which needs to be installed **in the same environment**:
-
-    (ita19) conda install jupyter rise pythreejs jupyter_contrib_nbextensions jupyter_nbextensions_configurator --yes
 
 ## Verify installation
 
     (ita19) python
     >>> import compas_fab
     >>> compas_fab.__version__
-    '0.9.0'
+    '0.10.0'
     >>> exit()
 
 ## Examples
 
-* **Slides**: [link](https://docs.google.com/presentation/d/1OIU3vCmwe3lkVWpI0JuJJ-GFoOq5HH8ulElPZNS_F2Y/edit?usp=sharing)
+Some examples use Jupyter Notebooks, which needs to be installed **in the same environment**:
+
+    (ita19) conda install jupyter rise pythreejs jupyter_contrib_nbextensions jupyter_nbextensions_configurator --yes
+
+---
+
+* **Slides**: [part 1](https://docs.google.com/presentation/d/1OIU3vCmwe3lkVWpI0JuJJ-GFoOq5HH8ulElPZNS_F2Y/edit?usp=sharing) | [part 2](https://docs.google.com/presentation/d/1S29aMP9h4nRvQCdr1jGvp0L4YQCc8q0_irpHb9p9kos/edit?usp=sharing)
 * **Assignments**: [link](assignments/README.md)
 
 ---
