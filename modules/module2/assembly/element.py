@@ -4,6 +4,8 @@ from __future__ import print_function
 
 import json
 
+from compas_fab.robots import JointTrajectoryPoint
+
 from compas.datastructures import Mesh
 from compas.datastructures import mesh_transform
 from compas.geometry import Frame
@@ -33,6 +35,7 @@ class Element(object):
     def __init__(self, frame):
         super(Element, self).__init__()
         self.frame = frame
+        self.trajectory = None
         self._gripping_frame = None
         self._source = None
         self._mesh = None
@@ -180,6 +183,10 @@ class Element(object):
         if self._source:
             d['_source'] = _serialize_to_data(self._source)
 
+        # Probably best to store JointTrajectory instead of JointTrajectoryPoints
+        if self.trajectory:
+            d['trajectory'] = [p.to_data() for p in self.trajectory]
+            
         return d
 
     @data.setter
@@ -189,6 +196,8 @@ class Element(object):
             self.gripping_frame = Frame.from_data(data['gripping_frame'])
         if '_source' in data:
             self._source = _deserialize_from_data(data['_source'])
+        if 'trajectory' in data:
+            self.trajectory = [JointTrajectoryPoint.from_data(d) for d in data['trajectory']]
 
     def to_data(self):
         """Returns the data dictionary that represents the element.
