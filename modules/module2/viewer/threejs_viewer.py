@@ -50,9 +50,6 @@ def draw_cylinder(cylinder, color=None, radius_segments=8):
 
 class RobotArtist(BaseRobotArtist):
     
-    def __init__(self, robot):
-        super(RobotArtist, self).__init__(robot)
-
     def transform(self, geometry, transformation):
         R = transformation.matrix
         m = [R[0][0], R[1][0], R[2][0], R[0][1], R[1][1], R[2][1], R[0][2], R[1][2], R[2][2]]
@@ -60,7 +57,7 @@ class RobotArtist(BaseRobotArtist):
         geometry.quaternion = [qx, qy, qz, qw]
         geometry.position = [R[0][3], R[1][3], R[2][3]]
 
-    def draw_geometry(self, geometry, color=None):
+    def draw_geometry(self, geometry, name=None, color=None):
         if not color:
             color = '#cccccc'
         else:
