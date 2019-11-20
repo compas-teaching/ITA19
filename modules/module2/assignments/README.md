@@ -22,3 +22,12 @@
 
 ## Module 2.1
 
+1. Create a brick assembly with a single flemish bond.
+1. Transform assembly to be within robot reach
+1. Create a planning scene (add table, define picking_frame, etc.)
+1. Select assembly sequence
+1. For each brick element calculate pick and place paths and append brick to planning scene
+1. Save all paths in the element
+1. Serialise assembly
+
+<div align="center"><br><img src="../images/assignment2_1.jpg" width="600" /></div>
