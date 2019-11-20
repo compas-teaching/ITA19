@@ -1,15 +1,18 @@
 import os
-from compas.geometry import Frame
-from compas.geometry import Box
-from compas.geometry import Translation
-from compas.geometry import Transformation
-from compas.datastructures import Mesh
+import time
+
 from compas_fab.backends import RosClient
-from compas_fab.robots import Configuration
-from compas_fab.robots import CollisionMesh
 from compas_fab.robots import AttachedCollisionMesh
+from compas_fab.robots import CollisionMesh
+from compas_fab.robots import Configuration
 from compas_fab.robots import PlanningScene
 from compas_fab.robots import Tool
+
+from compas.datastructures import Mesh
+from compas.geometry import Box
+from compas.geometry import Frame
+from compas.geometry import Transformation
+from compas.geometry import Translation
 
 HERE = os.path.dirname(__file__)
 DATA = os.path.abspath(os.path.join(HERE, "..", "data"))
@@ -30,11 +33,11 @@ brick_acm = AttachedCollisionMesh(CollisionMesh(mesh, 'brick'), 'ee_link')
 with RosClient('localhost') as client:
     robot = client.load_robot()
     group = robot.main_group_name
-    robot.attached_tool(tool)
+    robot.attach_tool(tool)
     scene = PlanningScene(robot)
 
     scene.add_attached_tool()
-    #scene.add_attached_collision_mesh(brick_acm)
+    scene.add_attached_collision_mesh(brick_acm)
 
     # attention must be specified for the robots ee-link
     frames = []
@@ -53,3 +56,13 @@ with RosClient('localhost') as client:
     print("Computed cartesian path with %d configurations, " % len(trajectory.points))
     print("following %d%% of requested trajectory." % (trajectory.fraction * 100))
     print("Executing this path at full speed would take approx. %.3f seconds." % trajectory.time_from_start)
+
+    # Remove tool and bricks
+    scene.remove_attached_collision_mesh(brick_acm.collision_mesh.id)
+    scene.remove_collision_mesh(brick_acm.collision_mesh.id)
+
+    scene.remove_attached_tool()
+    scene.remove_collision_mesh(tool.name)
+    robot.detach_tool()
+
+    time.sleep(1)
