@@ -3,7 +3,6 @@ import json
 import sys
 import time
 from compas.geometry import Frame
-from compas.geometry import Box
 from compas.geometry import Transformation
 from compas_fab.backends import RosClient
 from compas_fab.robots import PlanningScene

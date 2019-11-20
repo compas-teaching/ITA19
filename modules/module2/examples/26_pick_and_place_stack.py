@@ -2,6 +2,7 @@ import os
 import sys
 import math
 import time
+import json
 from compas.geometry import Vector
 from compas.geometry import Frame
 from compas.geometry import Box
@@ -17,6 +18,13 @@ HERE = os.path.dirname(__file__)
 DATA = os.path.abspath(os.path.join(HERE, "..", "data"))
 ASSEMBLY_PATH = os.path.abspath(os.path.join(HERE, ".."))
 sys.path.append(ASSEMBLY_PATH)
+PATH_TO = os.path.join(DATA, os.path.splitext(os.path.basename(__file__))[0] + ".json")
+print(PATH_TO)
+
+# load settings (shared by GH)
+settings_file = os.path.join(DATA, "settings.json")
+with open(settings_file, 'r') as f:
+    data = json.load(f)
 
 from assembly import Element, Assembly
 
@@ -25,30 +33,51 @@ filepath = os.path.join(DATA, "vacuum_gripper.json")
 tool = Tool.from_json(filepath)
 
 # define brick dimensions
-width, length, height = 0.06, 0.03, 0.014
+width, length, height = data['brick_dimensions']
+
+# little tolerance to not 'crash' into collision objects
+tolerance_vector = Vector.from_data(data['tolerance_vector'])
+
+savelevel_vector = Vector.from_data(data['savelevel_vector'])
 
 # define target frame
 target_frame = Frame([-0.26, -0.28, height], [1, 0, 0], [0, 1, 0])
+target_frame.point += tolerance_vector
 
 # create Element and move it to target frame
-box_frame = Frame([-width/2., -length/2, 0], [1, 0, 0], [0, 1, 0])
-box = Box(box_frame, width, length, height)
-gripping_frame = Frame([0, 0, height], [1, 0, 0], [0, 1, 0])
-brick = Element.from_shape(box, gripping_frame)
+element = Element.from_data(data['brick'])
 
+# Bring the element's mesh into the robot's tool0 frame
+element_tool0 = element.copy()
+T = Transformation.from_frame_to_frame(element_tool0.gripping_frame, tool.frame)
+element_tool0.transform(T)
+
+# define picking_configuration
+picking_configuration = Configuration.from_data(data['picking_configuration'])
+
+# define picking frame
+picking_frame = Frame.from_data(data['picking_frame'])
+picking_frame.point += tolerance_vector
+
+# define savelevel frames 'above' the picking- and target frames
+savelevel_picking_frame = picking_frame.copy()
+savelevel_picking_frame.point += savelevel_vector
+savelevel_target_frame = target_frame.copy()
+savelevel_target_frame.point += savelevel_vector
+
+# create Assembly stack
 num = 7
 assembly = Assembly()
 
 for i in range(num):
-    dy = i * height
-    elem = brick.copy()
-    elem.transform(Translation([0, 0, dy]))
-    assembly.add_element(elem)
+    T = Translation([0, 0,  i * height])
+    assembly.add_element(element.transformed(T))
 
+# move assembly to position
 assembly.transform(Translation([-0.26, -0.28, 0]))
 
 # Bring the element's mesh into the robot's tool0 frame
-element_tool0 = assembly.elements[0].copy()
+element_tool0 = element.copy()
 T = Transformation.from_frame_to_frame(element_tool0.gripping_frame, tool.frame)
 element_tool0.transform(T)
 
@@ -134,6 +163,7 @@ with RosClient('localhost') as client:
     scene = PlanningScene(robot)
 
     scene.remove_collision_mesh('brick_wall')
+    time.sleep(0.5)
 
     # attach tool
     robot.attach_tool(tool)
@@ -146,12 +176,21 @@ with RosClient('localhost') as client:
     # add the collision mesh to the scene
     scene.add_attached_collision_mesh(brick_acm)
 
-    #
+    # compute 'pick' cartesian motion
     trajectory1 = calculate_picking_motion(start_configuration, picking_frame, tolerance_vector, savelevel_vector)
     assert(trajectory1.fraction == 1.)
     start_configuration = trajectory1.points[-1]
 
     for key in assembly.network.vertices():
-        elem = assembly.network.vertex[key]['element']
+        elem = assembly.element(key)
         trajectory2, trajectory3 = move_and_placing_motion(elem, start_configuration, tolerance_vector, savelevel_vector, brick_acm)
         assert(trajectory3.fraction == 1.)
+
+        # add trajectories to element and set to 'planned'
+        elem.trajectory = [trajectory1, trajectory2, trajectory3]
+        assembly.network.set_vertex_attribute(key, 'is_planned', True)
+        print("Calculated element with key %d" % key)
+
+
+# 6. Save assembly to json
+assembly.to_json(PATH_TO)

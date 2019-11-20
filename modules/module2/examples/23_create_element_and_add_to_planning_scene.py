@@ -3,13 +3,10 @@ import sys
 import time
 import json
 from compas.geometry import Frame
-from compas.geometry import Box
-from compas.geometry import Vector
 from compas.geometry import Transformation
 from compas_fab.backends import RosClient
 from compas_fab.robots import PlanningScene
 from compas_fab.robots import CollisionMesh
-from compas_fab.robots import Configuration
 
 HERE = os.path.dirname(__file__)
 DATA = os.path.abspath(os.path.join(HERE, "..", "data"))
@@ -44,5 +41,5 @@ with RosClient('localhost') as client:
     time.sleep(2)
 
     # Remove elements from scene
-    #scene.remove_collision_mesh(brick.id)
-    #time.sleep(1)
+    # scene.remove_collision_mesh(brick.id)
+    # time.sleep(1)

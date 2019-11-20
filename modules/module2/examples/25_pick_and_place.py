@@ -5,7 +5,6 @@ import time
 import json
 from compas.geometry import Vector
 from compas.geometry import Frame
-from compas.geometry import Box
 from compas.geometry import Transformation
 from compas_fab.backends import RosClient
 from compas_fab.robots import PlanningScene
@@ -16,7 +15,7 @@ from compas_fab.robots import CollisionMesh
 
 HERE = os.path.dirname(__file__)
 DATA = os.path.abspath(os.path.join(HERE, "..", "data"))
-PATH_TO = os.path.join(DATA, os.path.basename(__file__) + ".json")
+PATH_TO = os.path.join(DATA, os.path.splitext(os.path.basename(__file__))[0] + ".json")
 print(PATH_TO)
 
 ASSEMBLY_PATH = os.path.abspath(os.path.join(HERE, ".."))
@@ -38,6 +37,8 @@ width, length, height = data['brick_dimensions']
 
 # little tolerance to not 'crash' into collision objects
 tolerance_vector = Vector.from_data(data['tolerance_vector'])
+
+savelevel_vector = Vector.from_data(data['savelevel_vector'])
 
 # define target frame
 target_frame = Frame([-0.26, -0.28, height], [1, 0, 0], [0, 1, 0])
@@ -64,7 +65,6 @@ picking_frame = Frame.from_data(data['picking_frame'])
 picking_frame.point += tolerance_vector
 
 # define savelevel frames 'above' the picking- and target frames
-savelevel_vector = Vector.from_data(data['savelevel_vector'])
 savelevel_picking_frame = picking_frame.copy()
 savelevel_picking_frame.point += savelevel_vector
 savelevel_target_frame = target_frame.copy()
@@ -92,7 +92,6 @@ with RosClient('localhost') as client:
     scene.add_attached_collision_mesh(brick_acm)
 
     # ==========================================================================
-
     # 1. Calculate a cartesian motion from the picking frame to the savelevel_picking_frame
     frames = [picking_frame, savelevel_picking_frame]
 
@@ -102,6 +101,10 @@ with RosClient('localhost') as client:
                                               max_step=0.01,
                                               attached_collision_meshes=[brick_acm])
     assert(trajectory1.fraction == 1.)
+
+    # ==========================================================================
+    key = 0
+    element = assembly.element(key)
 
     # 2. Calulate a free-space motion to the savelevel_target_frame
     savelevel_target_frame_tool0 = robot.from_attached_tool_to_tool0([savelevel_target_frame])[0]
@@ -128,6 +131,13 @@ with RosClient('localhost') as client:
     # 4. Add the brick to the planning scene
     brick = CollisionMesh(element.mesh, 'brick_wall')
     scene.append_collision_mesh(brick)
+
+    # 5. Add trajectories to element and set to 'planned'
+    element.trajectory = [trajectory1, trajectory2, trajectory3]
+    assembly.network.set_vertex_attribute(key, 'is_planned', True)
     # ==========================================================================
 
     time.sleep(1)
+
+# 6. Save assembly to json
+assembly.to_json(PATH_TO)
