@@ -15,6 +15,8 @@ DATA = os.path.abspath(os.path.join(HERE, "..", "data"))
 mesh = Mesh.from_stl(os.path.join(DATA, "vacuum_gripper.stl"))
 frame = Frame([0.07, 0, 0], [0, 0, 1], [0, 1, 0])
 tool = Tool(mesh, frame)
+tool.to_json(os.path.join(DATA, "vacuum_gripper.json"))
+
 
 with RosClient('localhost') as client:
     robot = client.load_robot()
