@@ -30,6 +30,6 @@
 1. Here create a planning scene, add floor, define/load picking_frame, etc. from settings (check example nr. 26.).
 1. Iterate over all brick in the assembly and for each brick calculate pick and place paths and append brick to planning scene.
 1. Save all paths in the element
-1. Serialise assembly
+1. Serialise assembly into `02_flemish_bond_planned.json`
 
 <div align="center"><br><img src="../images/assignment2_1.jpg" width="600" /></div>
