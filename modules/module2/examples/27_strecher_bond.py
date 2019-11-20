@@ -1,43 +1,72 @@
+
+import os
+import sys
+import json
+
+from compas.geometry import Translation
+
+HERE = os.path.dirname(__file__)
+DATA = os.path.abspath(os.path.join(HERE, "..", "data"))
+ASSEMBLY_PATH = os.path.abspath(os.path.join(HERE, ".."))
+sys.path.append(ASSEMBLY_PATH)
+PATH_TO = os.path.join(DATA, os.path.splitext(os.path.basename(__file__))[0] + ".json")
+print(PATH_TO)
+
+from assembly import Element, Assembly
+
+# load settings (shared by GH)
+settings_file = os.path.join(DATA, "settings.json")
+with open(settings_file, 'r') as f:
+    data = json.load(f)
+
+
+# Get from settings
+# Get from settings
+brick = Element.from_data(data['brick'])
+halfbrick = Element.from_data(data['halfbrick'])
+width, length, height = data['brick_dimensions']
+
 COURSES = 3
 BRICKS_PER_COURSE = 5
-W = 0.1
-L = 0.2
-H = 0.05
+
 MORTAR_PERPENDS = 0.003
 MORTAR_BEDS = 0.003
 
 assembly = Assembly()
-frame = Frame.worldXY()
-row_frame = Frame.worldXY()
 
-t = Translation([0.0, L + MORTAR_PERPENDS, 0]) 
+total_length = BRICKS_PER_COURSE * width + (BRICKS_PER_COURSE - 1) * MORTAR_PERPENDS
+gap_even = MORTAR_PERPENDS
+gap_uneven = (total_length - (BRICKS_PER_COURSE * width))/BRICKS_PER_COURSE
+
 
 for row in range(COURSES):
-    prev_brick_key = None
+
+    dy = row * height
     half_brick_ends = row % 2 != 0
+    gap = gap_even if row % 2 == 0 else gap_uneven
+    dx = 0
 
-    row_frame = Frame.worldXY()
-    row_frame.point.z = (row * H) + (row * MORTAR_BEDS)
+    bricks_in_course = BRICKS_PER_COURSE + (1 if half_brick_ends else 0)
+    for j in range(bricks_in_course):
 
-    for i in range(BRICKS_PER_COURSE + (1 if half_brick_ends else 0)):
-        w = W
-        l = L
-        h = H
-        first = i == 0
-        last = i == BRICKS_PER_COURSE
+        first = j == 0
+        last = j == bricks_in_course - 1
+
         is_half_brick = (first or last) and half_brick_ends
 
         if is_half_brick:
-            l = L / 2 - MORTAR_PERPENDS / 2
-
-        brick = Brick(row_frame, w, l, h)
-        brick_key = assembly.add_element(brick)
-
-        if prev_brick_key is not None:
-            assembly.add_connection(brick_key, prev_brick_key)
-        prev_brick_key = brick_key
-
-        if is_half_brick:
-            row_frame = row_frame.transformed(Translation([0.0, l + MORTAR_PERPENDS, 0.0]))
+            T = Translation([dx - width/4, 0, dy])
+            assembly.add_element(halfbrick.transformed(T))
+            dx += width/2
         else:
-            row_frame = row_frame.transformed(t)
+            T = Translation([dx, 0, dy])
+            assembly.add_element(brick.transformed(T))
+            dx += width
+
+        dx += gap
+
+
+assembly.transform(Translation([-0.26, -0.28, 0]))
+
+# 6. Save assembly to json
+assembly.to_json(PATH_TO)
