@@ -24,10 +24,10 @@ Some examples use Jupyter Notebooks, which needs to be installed **in the same e
 
 ## Examples
 
-### Part 1
+### Session 1: 14th November 2019
 
-* **Slides**: [part 1](https://docs.google.com/presentation/d/1OIU3vCmwe3lkVWpI0JuJJ-GFoOq5HH8ulElPZNS_F2Y/edit?usp=sharing)
-* **Assignments**: [part 1](assignments/README.md)
+* **Slides**: [session 1](https://docs.google.com/presentation/d/1OIU3vCmwe3lkVWpI0JuJJ-GFoOq5HH8ulElPZNS_F2Y/edit?usp=sharing)
+* **Assignments**: [session 1](assignments/session1.md)
 
 ---
 
@@ -56,10 +56,10 @@ Some examples use Jupyter Notebooks, which needs to be installed **in the same e
     * [Remove objects from the scene](examples/16_remove_collision_mesh.py)
 * [Grasshopper Playground](examples/17_robot_playground_ur5.ghx)
 
-### Part 2
+### Session 2: 20th November 2019
 
-* **Slides**:  [part 2](https://docs.google.com/presentation/d/1S29aMP9h4nRvQCdr1jGvp0L4YQCc8q0_irpHb9p9kos/edit?usp=sharing)
-* **Assignments**: [part 2](assignments/README.md#module-21-1)
+* **Slides**:  [session 2](https://docs.google.com/presentation/d/1S29aMP9h4nRvQCdr1jGvp0L4YQCc8q0_irpHb9p9kos/edit?usp=sharing)
+* **Assignments**: [session 2](assignments/session2.md)
 * **Jupyter Notebooks**:
   * [Path planning](Path%20planning.ipynb)
   * [Robotic Assembly](Robotic%20Assembly.ipynb)
