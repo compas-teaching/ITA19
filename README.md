@@ -9,10 +9,10 @@ The PhD-level course (primarily for A&T PhDs) will introduce computational metho
 ## Learning objectives
 
 * understand the scope and relevance of computational methods for architecture and engineering research and practice,
-* the theoretical background of fundamental data structures, 
-* the basic principles of algorithmic design; 
-* implement basic versions of prevalent algorithms related to architectural geometry, structural design, robotic assembly, volumetric modeling & 3D-printing, high-performance computation; 
-* use sophisticated algorithms available through open-source libraries to solve real-world problems; and, 
+* the theoretical background of fundamental data structures,
+* the basic principles of algorithmic design;
+* implement basic versions of prevalent algorithms related to architectural geometry, structural design, robotic assembly, volumetric modeling & 3D-printing, high-performance computation;
+* use sophisticated algorithms available through open-source libraries to solve real-world problems; and,
 * use common CAD tools as interfaces to self-implemented solutions.
 
 ## Overview
@@ -22,7 +22,7 @@ Course will consist of a few lectures, several tutorials and project-based exerc
 Topics will include:
 
 * Intro Python programming
-* Intro COMPAS open-source framework (https://compas-dev.github.io/) 
+* Intro COMPAS open-source framework (https://compas-dev.github.io/)
 * Intro to geometry processing, data structures, topology, numerical computation
 * Domain-specific case studies (e.g. on architectural geometry, structural design, robotic assembly, volumetric modeling and 3D printing, high performance computation)
 
@@ -37,7 +37,7 @@ Week | Date | Lead | Title | Description | Links
 5 | Nov 6 | BRG | Module 1: Structural Design | **Case study:** The HiLo cablenet formwork system | [Slides](slides/week-5_Structural-Design.pdf)
 6 | Nov 13 | GKR | Module 2: Robotic Assembly | **Theory:** Robotic fabrication planning and executing | [Slides](https://docs.google.com/presentation/d/1OIU3vCmwe3lkVWpI0JuJJ-GFoOq5HH8ulElPZNS_F2Y/edit?usp=sharing), [Jupyter Notebook](modules/module2/Frame%20and%20Transformation.ipynb), [Assignment](modules/module2/assignments/session1.md)
 7 | Nov 20 | GKR | Module 2: Robotic Assembly | **Case study:** Robotic assembly of a brick wall | [Slides](https://docs.google.com/presentation/d/1S29aMP9h4nRvQCdr1jGvp0L4YQCc8q0_irpHb9p9kos/edit?usp=sharing), [Assignment](modules/module2/assignments/session2.md)
-8 | Nov 27 | DBT | Module 3: Volumetric Modeling | **Theory:** Modelling with signed distance functions
+8 | Nov 27 | DBT | Module 3: Volumetric Modeling | **Theory:** Modelling with signed distance functions | [Slides](slides/week-08_VolumetricModelling.pdf), [Notebooks](modules/module3/week1)
 9 | Dec 4 | DBT | Module 3: Volumetric Modeling | **Case study:** Modelling of a node
 10 | Dec 11 | BRG | Next Steps | Using COMPAS in your own work
 
@@ -62,7 +62,7 @@ in your command line.
 From the `Nbextensions` tab in the notebook, install the following extensions:
 
 1. Split Cells Notebook: Enable split cells in Jupyter notebooks
-2. RISE: allows you to instantly turn your Jupyter Notebooks into a slideshow. 
+2. RISE: allows you to instantly turn your Jupyter Notebooks into a slideshow.
 
 ### Configure workspace
 
