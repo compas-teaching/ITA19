@@ -37,8 +37,8 @@ Week | Date | Lead | Title | Description | Links
 5 | Nov 6 | BRG | Module 1: Structural Design | **Case study:** The HiLo cablenet formwork system | [Slides](slides/week-5_Structural-Design.pdf)
 6 | Nov 13 | GKR | Module 2: Robotic Assembly | **Theory:** Robotic fabrication planning and executing | [Slides](https://docs.google.com/presentation/d/1OIU3vCmwe3lkVWpI0JuJJ-GFoOq5HH8ulElPZNS_F2Y/edit?usp=sharing), [Jupyter Notebook](modules/module2/Frame%20and%20Transformation.ipynb), [Assignment](modules/module2/assignments/session1.md)
 7 | Nov 20 | GKR | Module 2: Robotic Assembly | **Case study:** Robotic assembly of a brick wall | [Slides](https://docs.google.com/presentation/d/1S29aMP9h4nRvQCdr1jGvp0L4YQCc8q0_irpHb9p9kos/edit?usp=sharing), [Assignment](modules/module2/assignments/session2.md)
-8 | Nov 27 | DBT | Module 3: Volumetric Modeling | **Theory:** Modelling with signed distance functions | [Slides](slides/week-08_VolumetricModelling.pdf), [Notebooks](modules/module3/week1)
-9 | Dec 4 | DBT | Module 3: Volumetric Modeling | **Case study:** Modelling of a node
+8 | Nov 27 | DBT | Module 3: Volumetric Modeling | **Theory:** Modelling with signed distance functions | [Slides](slides/week-08_VolumetricModelling.pdf), [Notebooks](modules/module3/week1), [Assignment](modules/module3/week1/Assignment/README.md)
+9 | Dec 4 | DBT | Module 3: Volumetric Modeling | **Case study:** Modelling of a node | [Slides](slides/week-09_VolumetricModelling_2.pdf), [Notebooks](modules/module3/week2), [Assignment](modules/module3/week2/Assignment/README.md)
 10 | Dec 11 | BRG | Next Steps | Using COMPAS in your own work
 
 ## Join us on slack
